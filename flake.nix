@@ -1,5 +1,5 @@
 {
-  description = "Minimal NixOS (Hyprland + NVIDIA + WiFi + Kitty) on desktop";
+  description = "hbohlen-systems: minimal desktop host";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -10,8 +10,8 @@
     nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [
-        ./hosts/desktop/hardware-configuration.nix
-        ./hosts/desktop/configuration.nix
+        ./infrastructure/nixos/hosts/desktop/hardware-configuration.nix
+        ./infrastructure/nixos/hosts/desktop/configuration.nix
       ];
     };
   };
