@@ -5,6 +5,11 @@
   time.timeZone = "America/Chicago";
   i18n.defaultLocale = "en_US.UTF-8";
 
+  programs.direnv = {
+    enable = true;            # installs direnv + hooks your shell init
+    nix-direnv.enable = true; # lets '.envrc' use the 'use nix' directive
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   hardware.enableRedistributableFirmware = true;

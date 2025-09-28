@@ -15,9 +15,6 @@
         alejandra nixfmt-rfc-style
         direnv nix-direnv
       ];
-      shellHook = ''
-        echo "Tip: run: echo 'use nix' > .envrc && direnv allow"
-      '';
     };
 
     packages.${system}.formatters = pkgs.writeShellScriptBin "fmt" ''
