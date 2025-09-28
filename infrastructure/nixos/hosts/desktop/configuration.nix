@@ -10,6 +10,16 @@
     nix-direnv.enable = true; # lets '.envrc' use the 'use nix' directive
   };
 
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";                   # run weekly
+    options = "--delete-older-than 30d"; # delete store paths unused for 30+ days
+  };
+
+  # Keep some history for safety
+  boot.loader.systemd-boot.configurationLimit = 7; # keep 7 boot entries
+
   nixpkgs.config.allowUnfree = true;
 
   hardware.enableRedistributableFirmware = true;
