@@ -5,38 +5,45 @@
   time.timeZone = "America/Chicago";
   i18n.defaultLocale = "en_US.UTF-8";
 
+  # direnv (dev convenience)
   programs.direnv = {
-    enable = true;            # installs direnv + hooks your shell init
-    nix-direnv.enable = true; # lets '.envrc' use the 'use nix' directive
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   # Automatic garbage collection
   nix.gc = {
     automatic = true;
-    dates = "weekly";                   # run weekly
-    options = "--delete-older-than 30d"; # delete store paths unused for 30+ days
+    dates = "weekly";
+    options = "--delete-older-than 30d";
   };
 
-  # Keep some history for safety
-  boot.loader.systemd-boot.configurationLimit = 7; # keep 7 boot entries
+  # Keep a few generations in systemd-boot
+  boot.loader.systemd-boot.configurationLimit = 7;
 
+  # Allow unfree software (NVIDIA, Vivaldi, Zed, etc.)
   nixpkgs.config.allowUnfree = true;
 
+  # Firmware
   hardware.enableRedistributableFirmware = true;
 
+  # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # User account
   users.users.hbohlen = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
-    initialPassword = "changeme";
+    initialPassword = "changeme"; # change after first login
     shell = pkgs.bashInteractive;
   };
   security.sudo.wheelNeedsPassword = true;
 
+  # Networking
   networking.networkmanager.enable = true;
 
+  # NVIDIA graphics
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.graphics = {
     enable = true;
@@ -51,9 +58,11 @@
   };
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
 
+  # Hyprland Wayland compositor
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
 
+  # Login manager (tuigreet → Hyprland)
   services.greetd = {
     enable = true;
     settings.default_session = {
@@ -62,17 +71,43 @@
     };
   };
 
+  # Portals (screensharing, file pickers)
   xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-
-  environment.systemPackages = with pkgs; [
-    vim git curl htop
-    networkmanager
-    kitty
-    networkmanagerapplet
+  xdg.portal.extraPortals = with pkgs; [
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
   ];
 
+  # PolicyKit (needed by network-manager, etc.)
+  security.polkit.enable = true;
+
+  # Audio with PipeWire
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
+
+  # Session variables (helpful for Wayland apps, esp. Electron like Zed/Vivaldi)
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # Uncomment if you ever lose cursor with NVIDIA:
+  # environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
+
+  # Installed system packages
+  environment.systemPackages = with pkgs; [
+    vim git curl htop
+    networkmanager networkmanagerapplet
+    kitty
+    vivaldi
+    zed-editor
+    fuzzel
+    waybar
+  ];
+
+  # Enable flakes + new nix CLI
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # State version (don’t bump unless you know why)
   system.stateVersion = lib.mkDefault "25.05";
 }
