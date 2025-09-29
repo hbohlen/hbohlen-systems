@@ -25,7 +25,7 @@
       # Basic monitor configuration
       monitor = ",preferred,auto,auto";
       
-      # General settings
+      # General settings - optimized for window management
       general = {
         gaps_in = 5;
         gaps_out = 10;
@@ -34,9 +34,12 @@
         "col.inactive_border" = "rgba(595959aa)";
         layout = "dwindle";
         allow_tearing = false;
+        resize_on_border = true;
+        extend_border_grab_area = 15;
+        hover_icon_on_border = true;
       };
       
-      # Input configuration
+      # Input configuration - enhanced for better window management
       input = {
         kb_layout = "us";
         kb_variant = "";
@@ -44,24 +47,38 @@
         kb_options = "";
         kb_rules = "";
         follow_mouse = 1;
+        mouse_refocus = true;
+        float_switch_override_focus = 2;
         touchpad = {
           natural_scroll = false;
+          disable_while_typing = true;
+          tap-to-click = true;
+          drag_lock = false;
+          scroll_factor = 1.0;
         };
         sensitivity = 0;
+        accel_profile = "flat";
       };
       
-      # Decoration settings
+      # Decoration settings - optimized for NVIDIA
       decoration = {
         rounding = 8;
         blur = {
           enabled = true;
           size = 3;
           passes = 1;
+          vibrancy = 0.1696;
+          new_optimizations = true;
+          xray = false;
         };
         drop_shadow = true;
         shadow_range = 4;
         shadow_render_power = 3;
+        shadow_offset = "0 0";
         "col.shadow" = "rgba(1a1a1aee)";
+        active_opacity = 1.0;
+        inactive_opacity = 0.95;
+        fullscreen_opacity = 1.0;
       };
       
       # Animation settings
@@ -78,10 +95,29 @@
         ];
       };
       
-      # Layout configuration
+      # Layout configuration - enhanced dwindle settings
       dwindle = {
         pseudotile = true;
         preserve_split = true;
+        smart_split = false;
+        smart_resizing = true;
+        force_split = 0;
+        special_scale_factor = 0.8;
+        split_width_multiplier = 1.0;
+        use_active_for_splits = true;
+        default_split_ratio = 1.0;
+      };
+      
+      # Master layout configuration (alternative)
+      master = {
+        new_is_master = true;
+        new_on_top = false;
+        no_gaps_when_only = false;
+        orientation = "left";
+        inherit_fullscreen = true;
+        always_center_master = false;
+        smart_resizing = true;
+        drop_at_cursor = true;
       };
       
       # Gestures
@@ -89,9 +125,20 @@
         workspace_swipe = false;
       };
       
-      # Misc settings
+      # Misc settings - enhanced for better window management
       misc = {
         force_default_wallpaper = -1;
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+        mouse_move_enables_dpms = true;
+        key_press_enables_dpms = true;
+        vrr = 0;
+        animate_manual_resizes = true;
+        animate_mouse_windowdragging = true;
+        enable_swallow = true;
+        swallow_regex = "^(kitty)$";
+        focus_on_activate = false;
+        no_direct_scanout = true;
       };
     };
     
@@ -111,7 +158,7 @@
       workspace = 4, monitor:DP-1
       workspace = 5, monitor:DP-1
 
-      # Window rules
+      # Window rules - enhanced for better window management
       windowrule = float, ^(pavucontrol)$
       windowrule = float, ^(blueman-manager)$
       windowrule = float, ^(nm-connection-editor)$
@@ -129,6 +176,28 @@
       windowrule = float, title:^(Open Folder)(.*)$
       windowrule = float, title:^(Save As)(.*)$
       windowrule = float, title:^(Library)(.*)$
+      
+      # Additional window management rules
+      windowrule = center, ^(pavucontrol)$
+      windowrule = center, ^(blueman-manager)$
+      windowrule = center, ^(nm-connection-editor)$
+      windowrule = size 800 600, ^(pavucontrol)$
+      windowrule = size 600 500, ^(blueman-manager)$
+      windowrule = size 700 500, ^(nm-connection-editor)$
+      
+      # Tiling rules for better window management
+      windowrule = tile, ^(kitty)$
+      windowrule = tile, ^(vivaldi-stable)$
+      windowrule = tile, ^(code)$
+      windowrule = tile, ^(firefox)$
+      
+      # Opacity rules for inactive windows
+      windowrule = opacity 0.95 0.85, ^(kitty)$
+      windowrule = opacity 1.0 0.9, ^(vivaldi-stable)$
+      
+      # Focus rules
+      windowrule = noinitialfocus, ^(steam)$
+      windowrule = stayfocused, ^(fuzzel)$
 
       # Startup applications
       exec-once = waybar

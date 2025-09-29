@@ -6,7 +6,7 @@
   - Create basic Hyprland configuration file with essential settings
   - _Requirements: 4.1, 4.2_
 
-- [ ] 2. Implement core Hyprland window management configuration
+- [x] 2. Implement core Hyprland window management configuration
   - Configure basic window management settings (gaps, borders, layout)
   - Set up input device configuration (keyboard, mouse, touchpad)
   - Configure decoration settings (rounding, blur, shadows) optimized for NVIDIA
