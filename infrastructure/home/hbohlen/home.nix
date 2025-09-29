@@ -10,8 +10,8 @@
 
   programs.git = {
     enable = true;
-    userName = "Harrison Bohlen";
-    userEmail = "you@example.com";
+    userName = "Hayden Bohlen";
+    userEmail = "bohlenhayden@gmail.com";
   };
 
   programs.direnv = {
