@@ -35,7 +35,10 @@
   users.users.hbohlen = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
+<<<<<<< HEAD
+=======
     initialPassword = "changeme"; # change after first login
+>>>>>>> origin/main
     shell = pkgs.bashInteractive;
   };
   security.sudo.wheelNeedsPassword = true;
@@ -62,24 +65,46 @@
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
 
-  # Login manager (tuigreet → Hyprland via dbus-run-session)
+<<<<<<< HEAD
+  services.greetd.settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
+
+=======
+  # Login manager (tuigreet → Hyprland)
   services.greetd = {
-    enable = true;
-    settings.default_session = {
-      command = ''
-        ${pkgs.greetd.tuigreet}/bin/tuigreet \
-          --time --remember \
-          --cmd "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland"
-      '';
-      user = "greeter";
-    };
+  enable = true;
+  settings.default_session = {
+    command = ''
+      ${pkgs.greetd.tuigreet}/bin/tuigreet \
+        --time --remember \
+        --cmd "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland"
+    '';
+    user = "greeter";
   };
+};
+>>>>>>> origin/main
+
 
   # Portals (screensharing, file pickers)
   xdg.portal.enable = true;
+<<<<<<< HEAD
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+
+  environment.systemPackages = with pkgs; [
+    vim git curl htop
+    networkmanager
+    kitty
+    networkmanagerapplet
+    zed-editor
+    vivaldi
+    opencode
+    vscode
+    # affine
+    
+=======
   xdg.portal.extraPortals = with pkgs; [
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
+>>>>>>> origin/main
   ];
 
   # PolicyKit (needed by network-manager, etc.)
@@ -93,15 +118,14 @@
     wireplumber.enable = true;
   };
 
-  # Wayland/NVIDIA-friendly env vars
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";                 # Electron/Chromium on Wayland
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # GLX/NVIDIA selection
-    # If video apps complain and you don't use nvidia-vaapi-driver, remove this:
-    LIBVA_DRIVER_NAME = "nvidia";
-    # If you ever see a missing cursor or flicker on NVIDIA, toggle this:
-    # WLR_NO_HARDWARE_CURSORS = "1";
-  };
+  # --- Wayland/NVIDIA-friendly env vars ---
+environment.sessionVariables = {
+  NIXOS_OZONE_WL = "1";                 # Electron/Chromium on Wayland
+  __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # GLX/NVIDIA selection
+  LIBVA_DRIVER_NAME = "nvidia";         # VA-API on NVIDIA
+  # If you ever see a missing cursor or flicker on NVIDIA, toggle this:
+  # WLR_NO_HARDWARE_CURSORS = "1";
+};
 
   # Installed system packages
   environment.systemPackages = with pkgs; [
@@ -112,13 +136,6 @@
     zed-editor
     fuzzel
     waybar
-    opencode
-    kiro
-    codex
-    gemini-cli
-    gh
-    nodejs
-
   ];
 
   # Enable flakes + new nix CLI
