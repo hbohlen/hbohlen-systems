@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   networking.hostName = "desktop";
@@ -34,7 +39,11 @@
   # User account
   users.users.hbohlen = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "podman"
+    ];
     initialPassword = "changeme"; # change after first login
     shell = pkgs.bashInteractive;
   };
@@ -85,6 +94,16 @@
   # PolicyKit (needed by network-manager, etc.)
   security.polkit.enable = true;
 
+  # Podman container runtime
+  virtualisation = {
+    containers.enable = true;
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
   # Audio with PipeWire
   services.pipewire = {
     enable = true;
@@ -95,7 +114,7 @@
 
   # Wayland/NVIDIA-friendly env vars
   environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";                 # Electron/Chromium on Wayland
+    NIXOS_OZONE_WL = "1"; # Electron/Chromium on Wayland
     __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # GLX/NVIDIA selection
     # If video apps complain and you don't use nvidia-vaapi-driver, remove this:
     LIBVA_DRIVER_NAME = "nvidia";
@@ -105,8 +124,12 @@
 
   # Installed system packages
   environment.systemPackages = with pkgs; [
-    vim git curl htop
-    networkmanager networkmanagerapplet
+    vim
+    git
+    curl
+    htop
+    networkmanager
+    networkmanagerapplet
     kitty
     vivaldi
     zed-editor
@@ -119,12 +142,24 @@
     gh
     nodejs
     uv
+    podman-desktop
+    podman-compose
+    # Secrets management
+    _1password-gui
+    _1password
+  ];
 
+  # Import 1Password secrets management (pure injection approach)
+  imports = [
+    ../../secrets/onepassword-secrets.nix
   ];
 
   # Enable flakes + new nix CLI
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
-  # State version (don’t bump unless you know why)
+  # State version (don't bump unless you know why)
   system.stateVersion = lib.mkDefault "25.05";
 }
