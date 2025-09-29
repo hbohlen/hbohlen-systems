@@ -22,7 +22,7 @@
   - Add window management keybindings (fullscreen, floating toggle)
   - _Requirements: 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 5.1, 5.2_
 
-- [ ] 4. Configure waybar integration with home-manager
+- [x] 4. Configure waybar integration with home-manager
   - Enable waybar module in home-manager configuration
   - Create waybar configuration with workspace indicators
   - Configure system resource modules (CPU, memory, network)

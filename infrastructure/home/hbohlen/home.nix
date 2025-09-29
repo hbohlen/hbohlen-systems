@@ -273,6 +273,112 @@
     '';
   };
 
+  # Waybar status bar configuration
+  programs.waybar = {
+    enable = true;
+    settings = {
+      mainBar = {
+        layer = "top";
+        position = "top";
+        height = 30;
+        spacing = 4;
+        
+        # Module layout
+        modules-left = ["hyprland/workspaces"];
+        modules-center = ["clock"];
+        modules-right = ["pulseaudio" "network" "cpu" "memory"];
+        
+        # Workspace indicators for Hyprland
+        "hyprland/workspaces" = {
+          format = "{icon}";
+          format-icons = {
+            "1" = "1";
+            "2" = "2"; 
+            "3" = "3";
+            "4" = "4";
+            "5" = "5";
+            "6" = "6";
+            "7" = "7";
+            "8" = "8";
+            "9" = "9";
+          };
+          persistent-workspaces = {
+            "*" = 5;
+          };
+          on-click = "activate";
+          sort-by-number = true;
+        };
+        
+        # Clock and date display
+        clock = {
+          timezone = "America/New_York";
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          format = "{:%Y-%m-%d %H:%M}";
+          format-alt = "{:%A, %B %d, %Y}";
+        };
+        
+        # CPU monitoring
+        cpu = {
+          format = " {usage}%";
+          tooltip = false;
+          interval = 2;
+          states = {
+            warning = 70;
+            critical = 90;
+          };
+        };
+        
+        # Memory monitoring  
+        memory = {
+          format = " {}%";
+          tooltip-format = "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nSwap: {swapUsed:0.1f}G/{swapTotal:0.1f}G";
+          interval = 2;
+          states = {
+            warning = 70;
+            critical = 90;
+          };
+        };
+        
+        # Network monitoring
+        network = {
+          format-wifi = " {signalStrength}%";
+          format-ethernet = " {ipaddr}";
+          format-linked = " {ifname} (No IP)";
+          format-disconnected = "⚠ Disconnected";
+          format-alt = "{ifname}: {ipaddr}/{cidr}";
+          tooltip-format = "{ifname} via {gwaddr}";
+          tooltip-format-wifi = "{essid} ({signalStrength}%) ";
+          interval = 2;
+        };
+        
+        # Audio volume with PipeWire integration
+        pulseaudio = {
+          format = "{icon} {volume}%";
+          format-bluetooth = "{icon} {volume}% ";
+          format-bluetooth-muted = " {icon}";
+          format-muted = " {format_source}";
+          format-source = " {volume}%";
+          format-source-muted = "";
+          format-icons = {
+            headphone = "";
+            hands-free = "";
+            headset = "";
+            phone = "";
+            portable = "";
+            car = "";
+            default = ["" "" ""];
+          };
+          on-click = "pavucontrol";
+          on-click-right = "pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          on-scroll-up = "pactl set-sink-volume @DEFAULT_SINK@ +2%";
+          on-scroll-down = "pactl set-sink-volume @DEFAULT_SINK@ -2%";
+          tooltip-format = "{desc}\nVolume: {volume}%";
+        };
+      };
+    };
+    style = builtins.readFile ./waybar/style.css;
+  };
+
   home.packages = with pkgs; [
     ripgrep fd jq tree stow
   ];
