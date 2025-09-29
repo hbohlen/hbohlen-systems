@@ -53,21 +53,21 @@
   - Ensure compatibility with existing greetd login manager
   - _Requirements: 2.1, 4.1_
 
-- [ ] 8. Add window rules and workspace management
+- [x] 8. Add window rules and workspace management
   - Configure default workspace assignments for applications
   - Set up window rules for floating and tiling behavior
   - Configure workspace-specific settings and layouts
   - Add rules for application-specific window management
   - _Requirements: 5.3, 5.4, 5.5_
 
-- [ ] 9. Integrate configuration files with home-manager
+- [x] 9. Integrate configuration files with home-manager
   - Update main home.nix to include all new module configurations
   - Ensure proper file references and imports
   - Configure module dependencies and load order
   - Verify configuration builds successfully with home-manager
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 10. Test and validate complete desktop environment
+- [-] 10. Test and validate complete desktop environment
   - Create test script to verify all keybindings work correctly
   - Test waybar functionality and system information display
   - Verify fuzzel application launching and search

@@ -5,6 +5,7 @@
   home.homeDirectory = "/home/hbohlen";
   home.stateVersion = "24.11";
 
+  # Enable home-manager to manage itself
   programs.home-manager.enable = true;
 
   programs.git = {
@@ -18,7 +19,8 @@
     nix-direnv.enable = true;
   };
 
-  # Hyprland window manager configuration
+  # ===== HYPRLAND WINDOW MANAGER CONFIGURATION =====
+  # Comprehensive Hyprland setup with keybindings, window management, and NVIDIA optimizations
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -205,77 +207,17 @@
       ];
     };
     
-    # Additional Hyprland configuration
-    extraConfig = ''
-      # Environment variables for NVIDIA compatibility
-      env = LIBVA_DRIVER_NAME,nvidia
-      env = XDG_SESSION_TYPE,wayland
-      env = GBM_BACKEND,nvidia-drm
-      env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-      env = WLR_NO_HARDWARE_CURSORS,1
-
-      # Workspace rules
-      workspace = 1, monitor:DP-1, default:true
-      workspace = 2, monitor:DP-1
-      workspace = 3, monitor:DP-1
-      workspace = 4, monitor:DP-1
-      workspace = 5, monitor:DP-1
-
-      # Window rules - using windowrulev2 syntax for 0.51.0
-      windowrulev2 = float, class:^(pavucontrol)$
-      windowrulev2 = float, class:^(blueman-manager)$
-      windowrulev2 = float, class:^(nm-connection-editor)$
-      windowrulev2 = float, class:^(file_progress)$
-      windowrulev2 = float, class:^(confirm)$
-      windowrulev2 = float, class:^(dialog)$
-      windowrulev2 = float, class:^(download)$
-      windowrulev2 = float, class:^(notification)$
-      windowrulev2 = float, class:^(error)$
-      windowrulev2 = float, class:^(splash)$
-      windowrulev2 = float, class:^(confirmreset)$
-      windowrulev2 = float, title:^(Open File)(.*)$
-      windowrulev2 = float, title:^(Select a File)(.*)$
-      windowrulev2 = float, title:^(Choose wallpaper)(.*)$
-      windowrulev2 = float, title:^(Open Folder)(.*)$
-      windowrulev2 = float, title:^(Save As)(.*)$
-      windowrulev2 = float, title:^(Library)(.*)$
-      
-      # Additional window management rules
-      windowrulev2 = center, class:^(pavucontrol)$
-      windowrulev2 = center, class:^(blueman-manager)$
-      windowrulev2 = center, class:^(nm-connection-editor)$
-      windowrulev2 = size 800 600, class:^(pavucontrol)$
-      windowrulev2 = size 600 500, class:^(blueman-manager)$
-      windowrulev2 = size 700 500, class:^(nm-connection-editor)$
-      
-      # Tiling rules for better window management
-      windowrulev2 = tile, class:^(kitty)$
-      windowrulev2 = tile, class:^(vivaldi-stable)$
-      windowrulev2 = tile, class:^(code)$
-      windowrulev2 = tile, class:^(firefox)$
-      
-      # Opacity rules for inactive windows
-      windowrulev2 = opacity 0.95 0.85, class:^(kitty)$
-      windowrulev2 = opacity 1.0 0.9, class:^(vivaldi-stable)$
-      
-      # Focus rules
-      windowrulev2 = noinitialfocus, class:^(steam)$
-      windowrulev2 = stayfocused, class:^(fuzzel)$
-
-      # Startup applications with proper systemd integration and greetd compatibility
-      exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-      exec-once = systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP PATH XDG_DATA_DIRS
-      exec-once = systemctl --user start hyprland-session.target
-      
-      # Additional environment setup for greetd compatibility
-      exec-once = systemctl --user import-environment DISPLAY XAUTHORITY
-      exec-once = hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd --all
-    '';
+    # Additional Hyprland configuration from external file
+    # This includes window rules, workspace assignments, startup applications, and NVIDIA environment variables
+    extraConfig = builtins.readFile ./hyprland/hyprland.conf;
   };
 
-  # Fuzzel application launcher configuration
+  # ===== FUZZEL APPLICATION LAUNCHER CONFIGURATION =====
+  # Keyboard-driven application launcher integrated with Hyprland (Super+Space)
   programs.fuzzel = {
     enable = true;
+    # Note: home-manager fuzzel module expects Nix attribute sets, so we keep the configuration here
+    # The external fuzzel.ini file serves as documentation and reference for the settings below
     settings = {
       main = {
         terminal = "kitty";
@@ -337,117 +279,25 @@
     };
   };
 
-  # Waybar status bar configuration
+  # ===== WAYBAR STATUS BAR CONFIGURATION =====
+  # System status bar with workspace indicators, system monitoring, and Hyprland integration
   programs.waybar = {
     enable = true;
+    # Enable systemd integration for proper startup with Hyprland
     systemd = {
       enable = true;
       target = "hyprland-session.target";
     };
+    # Load configuration from external JSON file for easier maintenance
     settings = {
-      mainBar = {
-        layer = "top";
-        position = "top";
-        height = 30;
-        spacing = 4;
-        
-        # Module layout
-        modules-left = ["hyprland/workspaces"];
-        modules-center = ["clock"];
-        modules-right = ["pulseaudio" "network" "cpu" "memory"];
-        
-        # Workspace indicators for Hyprland
-        "hyprland/workspaces" = {
-          format = "{icon}";
-          format-icons = {
-            "1" = "1";
-            "2" = "2"; 
-            "3" = "3";
-            "4" = "4";
-            "5" = "5";
-            "6" = "6";
-            "7" = "7";
-            "8" = "8";
-            "9" = "9";
-          };
-          persistent-workspaces = {
-            "*" = 5;
-          };
-          on-click = "activate";
-          sort-by-number = true;
-        };
-        
-        # Clock and date display
-        clock = {
-          timezone = "America/New_York";
-          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-          format = "{:%Y-%m-%d %H:%M}";
-          format-alt = "{:%A, %B %d, %Y}";
-        };
-        
-        # CPU monitoring
-        cpu = {
-          format = " {usage}%";
-          tooltip = false;
-          interval = 2;
-          states = {
-            warning = 70;
-            critical = 90;
-          };
-        };
-        
-        # Memory monitoring  
-        memory = {
-          format = " {}%";
-          tooltip-format = "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nSwap: {swapUsed:0.1f}G/{swapTotal:0.1f}G";
-          interval = 2;
-          states = {
-            warning = 70;
-            critical = 90;
-          };
-        };
-        
-        # Network monitoring
-        network = {
-          format-wifi = " {signalStrength}%";
-          format-ethernet = " {ipaddr}";
-          format-linked = " {ifname} (No IP)";
-          format-disconnected = "⚠ Disconnected";
-          format-alt = "{ifname}: {ipaddr}/{cidr}";
-          tooltip-format = "{ifname} via {gwaddr}";
-          tooltip-format-wifi = "{essid} ({signalStrength}%) ";
-          interval = 2;
-        };
-        
-        # Audio volume with PipeWire integration
-        pulseaudio = {
-          format = "{icon} {volume}%";
-          format-bluetooth = "{icon} {volume}% ";
-          format-bluetooth-muted = " {icon}";
-          format-muted = " {format_source}";
-          format-source = " {volume}%";
-          format-source-muted = "";
-          format-icons = {
-            headphone = "";
-            hands-free = "";
-            headset = "";
-            phone = "";
-            portable = "";
-            car = "";
-            default = ["" "" ""];
-          };
-          on-click = "pavucontrol";
-          on-click-right = "pactl set-sink-mute @DEFAULT_SINK@ toggle";
-          on-scroll-up = "pactl set-sink-volume @DEFAULT_SINK@ +2%";
-          on-scroll-down = "pactl set-sink-volume @DEFAULT_SINK@ -2%";
-          tooltip-format = "{desc}\nVolume: {volume}%";
-        };
-      };
+      mainBar = builtins.fromJSON (builtins.readFile ./waybar/config.json);
     };
+    # Load CSS styling from external file
     style = builtins.readFile ./waybar/style.css;
   };
 
-  # Systemd user services for proper session management
+  # ===== SYSTEMD USER SERVICES =====
+  # Proper session management and service dependencies for Hyprland desktop environment
   systemd.user = {
     targets.hyprland-session = {
       Unit = {
@@ -487,6 +337,8 @@
     };
   };
 
+  # ===== ADDITIONAL PACKAGES =====
+  # Essential command-line tools and utilities
   home.packages = with pkgs; [
     ripgrep fd jq tree stow
   ];
