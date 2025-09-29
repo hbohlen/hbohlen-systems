@@ -30,7 +30,6 @@
   users.users.hbohlen = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
-    initialPassword = "changeme";
     shell = pkgs.bashInteractive;
   };
   security.sudo.wheelNeedsPassword = true;
@@ -54,13 +53,8 @@
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
 
-  services.greetd = {
-    enable = true;
-    settings.default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
-      user = "greeter";
-    };
-  };
+  services.greetd.settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/Hyprland";
+
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
@@ -70,6 +64,12 @@
     networkmanager
     kitty
     networkmanagerapplet
+    zed-editor
+    vivaldi
+    opencode
+    vscode
+    # affine
+    
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
