@@ -273,6 +273,70 @@
     '';
   };
 
+  # Fuzzel application launcher configuration
+  programs.fuzzel = {
+    enable = true;
+    settings = {
+      main = {
+        terminal = "kitty";
+        layer = "overlay";
+        width = 40;
+        horizontal-pad = 20;
+        vertical-pad = 10;
+        inner-pad = 10;
+        font = "monospace:size=12";
+        dpi-aware = "yes";
+        show-actions = "yes";
+        password-character = "*";
+        fields = "filename,name,generic";
+        fuzzy = "yes";
+        show-recent = "yes";
+        sort-result = "yes";
+        lines = 15;
+        tabs = 4;
+        exit-on-keyboard-focus-loss = "yes";
+      };
+      
+      colors = {
+        background = "1e1e2eff";
+        text = "cdd6f4ff";
+        match = "f38ba8ff";
+        selection = "585b70ff";
+        selection-text = "cdd6f4ff";
+        selection-match = "f38ba8ff";
+        border = "b4befeff";
+      };
+      
+      border = {
+        width = 2;
+        radius = 8;
+      };
+      
+      key-bindings = {
+        cancel = "Escape Control+c";
+        execute = "Return KP_Enter Control+m";
+        execute-or-next = "Tab";
+        cursor-left = "Left Control+b";
+        cursor-left-word = "Control+Left Mod1+b";
+        cursor-right = "Right Control+f";
+        cursor-right-word = "Control+Right Mod1+f";
+        cursor-home = "Home Control+a";
+        cursor-end = "End Control+e";
+        delete-prev = "BackSpace";
+        delete-prev-word = "Mod1+BackSpace Control+BackSpace";
+        delete-next = "Delete";
+        delete-next-word = "Mod1+d Control+Delete";
+        delete-line = "Control+k";
+        prev = "Up Control+p";
+        prev-page = "Page_Up Control+v";
+        next = "Down Control+n";
+        next-page = "Page_Down Mod1+v";
+        first = "Control+Home";
+        last = "Control+End";
+      };
+    };
+  };
+
   # Waybar status bar configuration
   programs.waybar = {
     enable = true;
