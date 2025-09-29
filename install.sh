@@ -5,8 +5,17 @@ set -euo pipefail
 # Run from live ISO after: sudo -i && git clone ... && cd hbohlen-systems
 # WARNING: this will ERASE your SSD.
 
-DISK="/dev/disk/by-id/nvme-Micron_2450_MTFDKBA1T0TFK_2146334B7D47"
+# IMPORTANT: Update this disk ID to match your laptop's actual SSD
+# Run 'ls /dev/disk/by-id/' to find your disk ID
+DISK="/dev/disk/by-id/nvme-REPLACE-WITH-YOUR-ACTUAL-DISK-ID"
 HOST="laptop"
+
+# Validate that user has updated the disk ID
+if [[ "$DISK" == *"REPLACE-WITH-YOUR-ACTUAL-DISK-ID"* ]]; then
+    echo "ERROR: Please update the DISK variable in this script with your actual disk ID"
+    echo "Run 'ls /dev/disk/by-id/' to find your disk and update line 9 of this script"
+    exit 1
+fi
 
 echo "[1/5] Setting up nix experimental features"
 export NIX_CONFIG="experimental-features = nix-command flakes"
