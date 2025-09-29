@@ -1,5 +1,5 @@
 {
-  description = "hbohlen-systems: minimal desktop host + devShell";
+  description = "hbohlen-systems: desktop + laptop hosts + devShell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -7,14 +7,14 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      home-manager,
-    }:
+    { self, nixpkgs, home-manager, disko }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
@@ -40,20 +40,40 @@
         nixfmt --width 100 $(git ls-files '*.nix' || true)
       '';
 
-      nixosConfigurations.desktop = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ./infrastructure/nixos/hosts/desktop/hardware-configuration.nix
-          ./infrastructure/nixos/hosts/desktop/configuration.nix
+      nixosConfigurations = {
+        desktop = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./infrastructure/nixos/hosts/desktop/hardware-configuration.nix
+            ./infrastructure/nixos/hosts/desktop/configuration.nix
 
-          # --- Home Manager as a NixOS module ---
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.hbohlen = import ./infrastructure/home/hbohlen/home.nix;
-          }
-        ];
+            # --- Home Manager as a NixOS module ---
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.hbohlen = import ./infrastructure/home/hbohlen/home.nix;
+            }
+          ];
+        };
+
+        laptop = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit disko; };
+          modules = [
+            disko.nixosModules.disko
+            ./infrastructure/nixos/hosts/laptop/hardware-configuration.nix
+            ./infrastructure/nixos/hosts/laptop/configuration.nix
+
+            # --- Home Manager as a NixOS module ---
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.hbohlen = import ./infrastructure/home/hbohlen/home.nix;
+            }
+          ];
+        };
       };
     };
 }
