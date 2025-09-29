@@ -48,7 +48,7 @@
 
 - [ ] 7. Implement Hyprland startup and autostart configuration
   - Configure waybar to autostart with Hyprland session
-  - Set up proper service dependencies and ordering
+  - Set up proper service dependencies and ordering 
   - Configure any additional startup applications
   - Ensure compatibility with existing greetd login manager
   - _Requirements: 2.1, 4.1_

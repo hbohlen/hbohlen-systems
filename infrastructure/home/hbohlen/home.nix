@@ -71,11 +71,12 @@
           new_optimizations = true;
           xray = false;
         };
-        drop_shadow = true;
-        shadow_range = 4;
-        shadow_render_power = 3;
-        shadow_offset = "0 0";
-        "col.shadow" = "rgba(1a1a1aee)";
+        shadow = {
+          enabled = true;
+          range = 4;
+          render_power = 3;
+          color = "rgba(1a1a1aee)";
+        };
         active_opacity = 1.0;
         inactive_opacity = 0.95;
         fullscreen_opacity = 1.0;
@@ -110,20 +111,14 @@
       
       # Master layout configuration (alternative)
       master = {
-        new_is_master = true;
         new_on_top = false;
-        no_gaps_when_only = false;
         orientation = "left";
         inherit_fullscreen = true;
-        always_center_master = false;
         smart_resizing = true;
         drop_at_cursor = true;
       };
       
-      # Gestures
-      gestures = {
-        workspace_swipe = false;
-      };
+
       
       # Misc settings - enhanced for better window management
       misc = {
@@ -138,7 +133,7 @@
         enable_swallow = true;
         swallow_regex = "^(kitty)$";
         focus_on_activate = false;
-        no_direct_scanout = true;
+
       };
       
       # Keybinding configuration
@@ -226,46 +221,46 @@
       workspace = 4, monitor:DP-1
       workspace = 5, monitor:DP-1
 
-      # Window rules - enhanced for better window management
-      windowrule = float, ^(pavucontrol)$
-      windowrule = float, ^(blueman-manager)$
-      windowrule = float, ^(nm-connection-editor)$
-      windowrule = float, ^(file_progress)$
-      windowrule = float, ^(confirm)$
-      windowrule = float, ^(dialog)$
-      windowrule = float, ^(download)$
-      windowrule = float, ^(notification)$
-      windowrule = float, ^(error)$
-      windowrule = float, ^(splash)$
-      windowrule = float, ^(confirmreset)$
-      windowrule = float, title:^(Open File)(.*)$
-      windowrule = float, title:^(Select a File)(.*)$
-      windowrule = float, title:^(Choose wallpaper)(.*)$
-      windowrule = float, title:^(Open Folder)(.*)$
-      windowrule = float, title:^(Save As)(.*)$
-      windowrule = float, title:^(Library)(.*)$
+      # Window rules - using windowrulev2 syntax for 0.51.0
+      windowrulev2 = float, class:^(pavucontrol)$
+      windowrulev2 = float, class:^(blueman-manager)$
+      windowrulev2 = float, class:^(nm-connection-editor)$
+      windowrulev2 = float, class:^(file_progress)$
+      windowrulev2 = float, class:^(confirm)$
+      windowrulev2 = float, class:^(dialog)$
+      windowrulev2 = float, class:^(download)$
+      windowrulev2 = float, class:^(notification)$
+      windowrulev2 = float, class:^(error)$
+      windowrulev2 = float, class:^(splash)$
+      windowrulev2 = float, class:^(confirmreset)$
+      windowrulev2 = float, title:^(Open File)(.*)$
+      windowrulev2 = float, title:^(Select a File)(.*)$
+      windowrulev2 = float, title:^(Choose wallpaper)(.*)$
+      windowrulev2 = float, title:^(Open Folder)(.*)$
+      windowrulev2 = float, title:^(Save As)(.*)$
+      windowrulev2 = float, title:^(Library)(.*)$
       
       # Additional window management rules
-      windowrule = center, ^(pavucontrol)$
-      windowrule = center, ^(blueman-manager)$
-      windowrule = center, ^(nm-connection-editor)$
-      windowrule = size 800 600, ^(pavucontrol)$
-      windowrule = size 600 500, ^(blueman-manager)$
-      windowrule = size 700 500, ^(nm-connection-editor)$
+      windowrulev2 = center, class:^(pavucontrol)$
+      windowrulev2 = center, class:^(blueman-manager)$
+      windowrulev2 = center, class:^(nm-connection-editor)$
+      windowrulev2 = size 800 600, class:^(pavucontrol)$
+      windowrulev2 = size 600 500, class:^(blueman-manager)$
+      windowrulev2 = size 700 500, class:^(nm-connection-editor)$
       
       # Tiling rules for better window management
-      windowrule = tile, ^(kitty)$
-      windowrule = tile, ^(vivaldi-stable)$
-      windowrule = tile, ^(code)$
-      windowrule = tile, ^(firefox)$
+      windowrulev2 = tile, class:^(kitty)$
+      windowrulev2 = tile, class:^(vivaldi-stable)$
+      windowrulev2 = tile, class:^(code)$
+      windowrulev2 = tile, class:^(firefox)$
       
       # Opacity rules for inactive windows
-      windowrule = opacity 0.95 0.85, ^(kitty)$
-      windowrule = opacity 1.0 0.9, ^(vivaldi-stable)$
+      windowrulev2 = opacity 0.95 0.85, class:^(kitty)$
+      windowrulev2 = opacity 1.0 0.9, class:^(vivaldi-stable)$
       
       # Focus rules
-      windowrule = noinitialfocus, ^(steam)$
-      windowrule = stayfocused, ^(fuzzel)$
+      windowrulev2 = noinitialfocus, class:^(steam)$
+      windowrulev2 = stayfocused, class:^(fuzzel)$
 
       # Startup applications
       exec-once = waybar
