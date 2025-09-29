@@ -176,10 +176,10 @@ in
         echo "✅ Authenticated to 1Password"
         echo ""
         echo "Available accounts:"
-        op account list --format=table
+        op account list --format=json
         echo ""
         echo "Available vaults:"
-        op vault list --format=table
+        op vault list --format=json
         echo ""
         echo "Test secret injection:"
         if op inject -i ${developmentEnvTemplate} >/dev/null 2>&1; then

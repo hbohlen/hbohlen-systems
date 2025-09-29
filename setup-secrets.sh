@@ -74,7 +74,7 @@ setup_authentication() {
     # Check if already authenticated
     if op account list &>/dev/null; then
         log_success "Already authenticated to 1Password"
-        op account list --format=table
+        op account list --format=json
         return 0
     fi
 
@@ -102,7 +102,7 @@ setup_authentication() {
     # Verify authentication
     if op account list &>/dev/null; then
         log_success "1Password authentication successful!"
-        op account list --format=table
+        op account list --format=json
     else
         log_error "Authentication failed. Please try:"
         log_error "1. Install and start 1Password desktop app"
