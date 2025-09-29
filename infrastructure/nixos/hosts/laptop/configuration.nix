@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   networking.hostName = "laptop";
@@ -21,7 +26,7 @@
   # Keep a few generations in systemd-boot
   boot.loader.systemd-boot.configurationLimit = 7;
 
-  # Allow unfree software
+  # Allow unfree software (same as desktop for consistency)
   nixpkgs.config.allowUnfree = true;
 
   # Firmware
@@ -47,12 +52,13 @@
   # Networking
   networking.networkmanager.enable = true;
 
-  # Laptop-specific: Intel graphics (adjust if you have NVIDIA/AMD)
+  # Laptop graphics - Intel integrated (different from desktop NVIDIA)
   services.xserver.videoDrivers = [ "intel" ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
+  # Note: No NVIDIA configuration for laptop
 
   # Hyprland Wayland compositor
   programs.hyprland.enable = true;
@@ -99,12 +105,13 @@
     wireplumber.enable = true;
   };
 
-  # Laptop-specific environment variables
+  # Laptop environment variables (without NVIDIA-specific ones)
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron/Chromium on Wayland
+    # Note: NVIDIA-specific variables removed for laptop
   };
 
-  # Laptop-specific packages (remove NVIDIA-specific ones)
+  # Installed system packages - matching desktop exactly, plus laptop-specific additions
   environment.systemPackages = with pkgs; [
     vim
     git
@@ -129,20 +136,26 @@
     # Secrets management
     _1password-gui
     _1password
-    # Laptop extras
+    # Laptop-specific power management tools
     powertop
     tlp
-    laptop-mode-tools
+    acpi
+    brightnessctl
+    # Wireless tools
+    iw
+    wpa_supplicant_gui
   ];
 
-  # Import 1Password secrets management
+  # Import 1Password secrets management (same as desktop)
   imports = [
     ../../secrets/onepassword-secrets.nix
   ];
 
-  # Laptop power management
+  # Laptop-specific power management
   services.tlp.enable = true;
-  services.power-profiles-daemon.enable = true;
+  powerManagement.enable = true;
+  services.thermald.enable = true; # Intel thermal management
+  # Note: auto-cpufreq can conflict with TLP, so we'll use TLP for now
 
   # Enable flakes + new nix CLI
   nix.settings.experimental-features = [
@@ -150,6 +163,6 @@
     "flakes"
   ];
 
-  # State version
+  # State version (same as desktop)
   system.stateVersion = lib.mkDefault "25.05";
 }
