@@ -66,15 +66,15 @@
   services.greetd = {
   enable = true;
   settings.default_session = {
-    # Use dbus-run-session and the explicit Hyprland binary path
     command = ''
       ${pkgs.greetd.tuigreet}/bin/tuigreet \
         --time --remember \
-        --cmd "dbus-run-session ${pkgs.hyprland}/bin/Hyprland"
+        --cmd "${pkgs.dbus}/bin/dbus-run-session ${pkgs.hyprland}/bin/Hyprland"
     '';
     user = "greeter";
   };
 };
+
 
   # Portals (screensharing, file pickers)
   xdg.portal.enable = true;
