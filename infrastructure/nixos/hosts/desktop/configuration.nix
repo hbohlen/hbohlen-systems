@@ -118,6 +118,7 @@
     gemini-cli
     gh
     nodejs
+    uv
 
   ];
 

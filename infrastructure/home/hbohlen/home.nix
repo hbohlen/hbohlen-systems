@@ -262,9 +262,14 @@
       windowrulev2 = noinitialfocus, class:^(steam)$
       windowrulev2 = stayfocused, class:^(fuzzel)$
 
-      # Startup applications
-      exec-once = waybar
+      # Startup applications with proper systemd integration and greetd compatibility
       exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+      exec-once = systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP PATH XDG_DATA_DIRS
+      exec-once = systemctl --user start hyprland-session.target
+      
+      # Additional environment setup for greetd compatibility
+      exec-once = systemctl --user import-environment DISPLAY XAUTHORITY
+      exec-once = hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd --all
     '';
   };
 
@@ -335,6 +340,10 @@
   # Waybar status bar configuration
   programs.waybar = {
     enable = true;
+    systemd = {
+      enable = true;
+      target = "hyprland-session.target";
+    };
     settings = {
       mainBar = {
         layer = "top";
@@ -436,6 +445,46 @@
       };
     };
     style = builtins.readFile ./waybar/style.css;
+  };
+
+  # Systemd user services for proper session management
+  systemd.user = {
+    targets.hyprland-session = {
+      Unit = {
+        Description = "Hyprland compositor session";
+        Documentation = [ "man:systemd.special(7)" ];
+        BindsTo = [ "graphical-session.target" ];
+        Wants = [ "graphical-session-pre.target" ];
+        After = [ "graphical-session-pre.target" ];
+      };
+    };
+
+    services.hyprland-autostart = {
+      Unit = {
+        Description = "Hyprland autostart applications";
+        PartOf = [ "hyprland-session.target" ];
+        After = [ "hyprland-session.target" ];
+      };
+      Service = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "hyprland-autostart" ''
+          # Start waybar with proper dependencies
+          ${pkgs.systemd}/bin/systemctl --user start waybar.service
+          
+          # Ensure proper environment for applications
+          ${pkgs.systemd}/bin/systemctl --user import-environment PATH
+          ${pkgs.systemd}/bin/systemctl --user import-environment XDG_DATA_DIRS
+          
+          # Start any additional desktop services
+          ${pkgs.systemd}/bin/systemctl --user start xdg-desktop-portal-hyprland.service || true
+          ${pkgs.systemd}/bin/systemctl --user start xdg-desktop-portal.service || true
+        '';
+      };
+      Install = {
+        WantedBy = [ "hyprland-session.target" ];
+      };
+    };
   };
 
   home.packages = with pkgs; [
