@@ -12,7 +12,7 @@
   - Configure decoration settings (rounding, blur, shadows) optimized for NVIDIA
   - _Requirements: 1.1, 5.4, 5.5_
 
-- [ ] 3. Create Hyprland keybinding configuration
+- [x] 3. Create Hyprland keybinding configuration
   - Implement terminal launch keybinding (Super+Return → kitty)
   - Configure window close keybinding (Super+Q)
   - Set up application launcher keybinding (Super+Space → fuzzel)
