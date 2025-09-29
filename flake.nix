@@ -15,7 +15,7 @@
     pkgs = import nixpkgs { inherit system; };
   in {
     devShells.${system}.default = pkgs.mkShell {
-      packages = with pkgs; [ git just ripgrep fd alejandra nixfmt-rfc-style direnv nix-direnv ];
+      packages = with pkgs; [ nil nixd git just ripgrep fd alejandra nixfmt-rfc-style direnv nix-direnv ];
     };
 
     packages.${system}.formatters = pkgs.writeShellScriptBin "fmt" ''
