@@ -64,12 +64,17 @@
 
   # Login manager (tuigreet → Hyprland)
   services.greetd = {
-    enable = true;
-    settings.default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
-      user = "greeter";
-    };
+  enable = true;
+  settings.default_session = {
+    # Use dbus-run-session and the explicit Hyprland binary path
+    command = ''
+      ${pkgs.greetd.tuigreet}/bin/tuigreet \
+        --time --remember \
+        --cmd "dbus-run-session ${pkgs.hyprland}/bin/Hyprland"
+    '';
+    user = "greeter";
   };
+};
 
   # Portals (screensharing, file pickers)
   xdg.portal.enable = true;
@@ -89,10 +94,14 @@
     wireplumber.enable = true;
   };
 
-  # Session variables (helpful for Wayland apps, esp. Electron like Zed/Vivaldi)
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
-  # Uncomment if you ever lose cursor with NVIDIA:
-  # environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
+  # --- Wayland/NVIDIA-friendly env vars ---
+environment.sessionVariables = {
+  NIXOS_OZONE_WL = "1";                 # Electron/Chromium on Wayland
+  __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # GLX/NVIDIA selection
+  LIBVA_DRIVER_NAME = "nvidia";         # VA-API on NVIDIA
+  # If you ever see a missing cursor or flicker on NVIDIA, toggle this:
+  # WLR_NO_HARDWARE_CURSORS = "1";
+};
 
   # Installed system packages
   environment.systemPackages = with pkgs; [
