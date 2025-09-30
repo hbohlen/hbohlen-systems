@@ -52,13 +52,32 @@
   # Networking
   networking.networkmanager.enable = true;
 
-  # Laptop graphics - Intel integrated (different from desktop NVIDIA)
-  services.xserver.videoDrivers = [ "intel" ];
+  # Laptop graphics - NVIDIA hybrid graphics (ASUS ROG Zephyrus M16 GU603ZW)
+  # Note: Base NVIDIA Prime configuration is provided by nixos-hardware module
+  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
-  # Note: No NVIDIA configuration for laptop
+  
+  # Additional NVIDIA configuration for ROG laptop
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = true; # Enable for hybrid graphics/better battery
+    open = false;
+    nvidiaSettings = true;
+    # Note: Prime offload and bus IDs are configured by nixos-hardware module
+    # If you need to override, uncomment and adjust:
+    # prime = {
+    #   offload = {
+    #     enable = true;
+    #     enableOffloadCmd = true;
+    #   };
+    #   intelBusId = "PCI:0:2:0";
+    #   nvidiaBusId = "PCI:1:0:0";
+    # };
+  };
 
   # Hyprland Wayland compositor
   programs.hyprland.enable = true;
@@ -105,10 +124,14 @@
     wireplumber.enable = true;
   };
 
-  # Laptop environment variables (without NVIDIA-specific ones)
+  # Laptop environment variables (with NVIDIA-specific ones for ROG laptop)
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron/Chromium on Wayland
-    # Note: NVIDIA-specific variables removed for laptop
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GL_GSYNC_ALLOWED = "1";
+    __GL_VRR_ALLOWED = "0";
   };
 
   # Installed system packages - matching desktop exactly, plus laptop-specific additions
@@ -144,6 +167,8 @@
     # Wireless tools
     iw
     wpa_supplicant_gui
+    # NVIDIA tools for ROG laptop
+    nvtopPackages.nvidia
   ];
 
   # Import 1Password secrets management (same as desktop)

@@ -70,9 +70,11 @@ After installation, you'll need to update the hardware configuration with your a
 The laptop configuration includes the same applications and services as the desktop but with these laptop-specific optimizations:
 
 ### Hardware Differences
-- **Graphics**: Intel integrated graphics instead of NVIDIA
+- **Graphics**: NVIDIA hybrid graphics (Intel iGPU + NVIDIA RTX 3070 Ti) for ASUS ROG Zephyrus M16
+- **nixos-hardware**: Uses nixos-hardware modules for ASUS ROG Zephyrus M16 GU603ZW
 - **Power Management**: TLP, thermald, and laptop-specific power settings
-- **Hardware Support**: Laptop-specific kernel modules and firmware
+- **NVIDIA Prime**: Configured for NVIDIA Optimus offload mode for better battery life
+- **Hardware Support**: Laptop-specific kernel modules and firmware from nixos-hardware
 
 ### Additional Laptop Software
 - `powertop` - Power consumption monitoring
@@ -81,41 +83,81 @@ The laptop configuration includes the same applications and services as the desk
 - `brightnessctl` - Screen brightness control
 - `iw` - Wireless configuration tools
 - `wpa_supplicant_gui` - WiFi GUI management
+- `nvtop` - NVIDIA GPU monitoring tool
 
 ### Services Enabled
 - `services.tlp.enable = true` - Power management
 - `services.thermald.enable = true` - Thermal management (Intel)
 - `powerManagement.enable = true` - System power management
+- `hardware.nvidia.prime.offload` - NVIDIA Optimus offload mode
+
+### nixos-hardware Integration
+The laptop configuration automatically includes hardware-specific optimizations from the nixos-hardware repository:
+- ASUS ROG Zephyrus GU603 series profile (`nixos-hardware.nixosModules.asus-zephyrus-gu603h`)
+- Optimized kernel parameters for ROG laptops
+- Intel CPU and NVIDIA Ampere GPU (RTX 30 series) support
+- NVIDIA Prime offload configuration with default bus IDs
+- Laptop and SSD optimizations
 
 ## Customization for Different Hardware
 
-### AMD CPU
-If you have an AMD CPU, update `hardware-configuration.nix`:
+**Note:** This configuration is now optimized specifically for the ASUS ROG Zephyrus M16 GU603ZW with nixos-hardware integration. For other laptop models, you may need to adjust the nixos-hardware module or remove it.
+
+### NVIDIA Prime Bus IDs
+The NVIDIA Prime configuration uses default bus IDs. To verify or update them for your specific system:
+
+```bash
+# Check your GPU bus IDs
+nix-shell -p pciutils --run "lspci | grep -E 'VGA|3D'"
+
+# Output will look like:
+# 00:02.0 VGA compatible controller: Intel Corporation ...
+# 01:00.0 3D controller: NVIDIA Corporation ...
+
+# Update the bus IDs in configuration.nix:
+# intelBusId = "PCI:0:2:0";   # from 00:02.0
+# nvidiaBusId = "PCI:1:0:0";  # from 01:00.0
+```
+
+### Using NVIDIA GPU for Specific Applications
+The configuration enables NVIDIA Prime offload mode. To run applications on the NVIDIA GPU:
+
+```bash
+# Run with NVIDIA GPU
+nvidia-offload <application>
+
+# Or use environment variables directly
+__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia <application>
+```
+
+### AMD CPU (for different laptop models)
+If you have a different laptop with an AMD CPU, update `hardware-configuration.nix`:
 ```nix
 boot.kernelModules = [ "kvm-amd" ]; # instead of "kvm-intel"
 hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 ```
 
-### NVIDIA Graphics (Gaming Laptop)
-If your laptop has NVIDIA graphics, update `configuration.nix`:
+### Intel-only Graphics (for different laptop models)
+If your laptop has only Intel integrated graphics (no NVIDIA), update `configuration.nix`:
 ```nix
-# Replace Intel graphics section with:
-services.xserver.videoDrivers = [ "nvidia" ];
-hardware.nvidia = {
-  package = pkgs.linuxPackages.nvidiaPackages.production;
-  modesetting.enable = true;
-  powerManagement.enable = true; # Enable for laptops
-  open = false;
-  nvidiaSettings = true;
+# Replace NVIDIA graphics section with:
+services.xserver.videoDrivers = [ "intel" ];
+hardware.graphics = {
+  enable = true;
+  enable32Bit = true;
 };
 
-# Add NVIDIA environment variables:
+# Remove NVIDIA-specific environment variables
 environment.sessionVariables = {
   NIXOS_OZONE_WL = "1";
-  __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-  LIBVA_DRIVER_NAME = "nvidia";
 };
 ```
+
+### Different nixos-hardware Module
+For different laptop models, check available modules at:
+https://github.com/NixOS/nixos-hardware
+
+Then update `flake.nix` to use the appropriate module instead of `asus-zephyrus-gu603h`.
 
 ### Different WiFi Chipsets
 Most WiFi chipsets are supported out of the box with `hardware.enableRedistributableFirmware = true`, but if you have issues:
