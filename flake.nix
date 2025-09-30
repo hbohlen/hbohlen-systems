@@ -14,7 +14,12 @@
   };
 
   outputs =
-    { self, nixpkgs, home-manager, disko }:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      disko,
+    }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
@@ -64,6 +69,21 @@
             disko.nixosModules.disko
             ./infrastructure/nixos/hosts/laptop/hardware-configuration.nix
             ./infrastructure/nixos/hosts/laptop/configuration.nix
+
+            # --- Home Manager as a NixOS module ---
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.hbohlen = import ./infrastructure/home/hbohlen/home.nix;
+            }
+          ];
+        };
+
+        hetzner-vps = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./infrastructure/nixos/hosts/hetzner-vps/configuration.nix
 
             # --- Home Manager as a NixOS module ---
             home-manager.nixosModules.home-manager

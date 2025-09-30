@@ -321,8 +321,8 @@
           ${pkgs.systemd}/bin/systemctl --user start waybar.service
 
           # Ensure proper environment for applications
-          ${pkgs.systemd}/bin/systemctl --user import-environment PATH
-          ${pkgs.systemd}/bin/systemctl --user import-environment XDG_DATA_DIRS
+          ${pkgs.systemd}/bin/systemctl --user import-environment DBUS_SESSION_BUS_ADDRESS XDG_RUNTIME_DIR
+          ${pkgs.systemd}/bin/systemctl --user import-environment PATH XDG_DATA_DIRS
 
           # Start any additional desktop services
           ${pkgs.systemd}/bin/systemctl --user start xdg-desktop-portal-hyprland.service || true
