@@ -44,4 +44,10 @@
 
   # Enable WiFi hardware
   hardware.enableRedistributableFirmware = true;
+
+  # Laptop hardware control utilities
+  environment.systemPackages = with pkgs; [
+    asusctl
+    supergfxctl
+  ];
 }
