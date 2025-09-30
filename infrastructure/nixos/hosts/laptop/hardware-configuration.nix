@@ -16,13 +16,15 @@
 
   # File systems - THESE MUST BE UPDATED WITH ACTUAL DEVICE UUIDs
   # Run 'blkid' to get the correct UUIDs for your laptop's partitions
+  # Updated by Copilot: set correct UUID
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-ROOT-UUID";
+    { device = "/dev/disk/by-uuid/ecfd0185-47bd-467a-ae98-a56a4efcc740";
       fsType = "ext4";
     };
 
+  # Updated by Copilot: set correct UUID
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-BOOT-UUID";
+    { device = "/dev/disk/by-uuid/B59B-E5D1";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
