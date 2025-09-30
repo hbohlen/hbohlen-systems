@@ -11,7 +11,7 @@
   # Common laptop kernel modules - adjust based on your actual hardware
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ]; # Change to "kvm-amd" if you have AMD CPU
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   # File systems - THESE MUST BE UPDATED WITH ACTUAL DEVICE UUIDs
@@ -39,13 +39,7 @@
   # Platform and CPU microcode
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # If you have AMD CPU, use this instead:
-  # hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  # Laptop-specific hardware enablement
-  services.thermald.enable = true; # Intel thermal management
-  powerManagement.enable = true;
-  
   # Enable WiFi hardware
   hardware.enableRedistributableFirmware = true;
 }
