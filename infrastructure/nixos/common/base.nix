@@ -49,6 +49,20 @@
   };
   security.sudo.wheelNeedsPassword = true;
 
+  security.wrappers.newuidmap = {
+    source = "${pkgs.shadow}/bin/newuidmap";
+    owner = "root";
+    group = "root";
+    setuid = true;
+  };
+
+  security.wrappers.newgidmap = {
+    source = "${pkgs.shadow}/bin/newgidmap";
+    owner = "root";
+    group = "root";
+    setuid = true;
+  };
+
   # Networking
   networking.networkmanager.enable = true;
 

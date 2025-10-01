@@ -38,18 +38,6 @@
       "networkmanager"
       "podman"
     ];
-    subUidRanges = [
-      {
-        startUid = 100000;
-        count = 65536;
-      }
-    ];
-    subGidRanges = [
-      {
-        startGid = 100000;
-        count = 65536;
-      }
-    ];
     initialPassword = "changeme"; # change after first login
     shell = pkgs.bashInteractive;
   };
@@ -112,4 +100,3 @@
   # State version (dont bump unless you know why)
   system.stateVersion = lib.mkDefault "25.05";
 }
-

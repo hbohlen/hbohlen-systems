@@ -18,6 +18,13 @@
     };
   };
 
+  # Enable cgroup delegation for rootless podman
+  security.unprivilegedUsernsClone = true;
+
+  systemd.services."user@".serviceConfig = {
+    Delegate = "cpu cpuset io memory pids";
+  };
+
   # Development and system tools
   environment.systemPackages = with pkgs; [
     # Core utilities

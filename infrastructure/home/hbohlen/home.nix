@@ -1,24 +1,52 @@
 { config, pkgs, ... }:
 
+let
+  # Atlassian CLI package definition
+  acli = pkgs.stdenv.mkDerivation rec {
+    pname = "acli";
+    version = "latest";
+
+    src = pkgs.fetchurl {
+      url = "https://acli.atlassian.com/linux/latest/acli_linux_amd64/acli";
+      # For ARM systems, use this instead:
+      # url = "https://acli.atlassian.com/linux/latest/acli_linux_arm64/acli";
+
+      # Get the hash by running:
+      # nix-prefetch-url https://acli.atlassian.com/linux/latest/acli_linux_amd64/acli
+      sha256 = "1azmvv51vga3vij2yb6yncm1x8higpg76yqbqpgx9gjvrd000wc6"; # UPDATE THIS
+    };
+
+    dontUnpack = true;
+    dontBuild = true;
+
+    installPhase = ''
+      mkdir -p $out/bin
+      cp $src $out/bin/acli
+      chmod +x $out/bin/acli
+    '';
+
+    meta = with pkgs.lib; {
+      description = "Atlassian CLI tool";
+      homepage = "https://developer.atlassian.com/";
+      platforms = platforms.linux;
+    };
+  };
+in
 {
   home.username = "hbohlen";
   home.homeDirectory = "/home/hbohlen";
   home.stateVersion = "24.11";
-
   # Enable home-manager to manage itself
   programs.home-manager.enable = true;
-
   programs.git = {
     enable = true;
     userName = "Hayden Bohlen";
     userEmail = "bohlenhayden@gmail.com";
   };
-
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };
-
   # ===== HYPRLAND WINDOW MANAGER CONFIGURATION =====
   # Comprehensive Hyprland setup with keybindings, window management, and NVIDIA optimizations
   wayland.windowManager.hyprland = {
@@ -26,7 +54,6 @@
     settings = {
       # Basic monitor configuration
       monitor = ",preferred,auto,auto";
-
       # General settings - optimized for window management
       general = {
         gaps_in = 5;
@@ -40,7 +67,6 @@
         extend_border_grab_area = 15;
         hover_icon_on_border = true;
       };
-
       # Input configuration - enhanced for better window management
       input = {
         kb_layout = "us";
@@ -61,7 +87,6 @@
         sensitivity = 0;
         accel_profile = "flat";
       };
-
       # Decoration settings - optimized for NVIDIA
       decoration = {
         rounding = 8;
@@ -83,7 +108,6 @@
         inactive_opacity = 0.95;
         fullscreen_opacity = 1.0;
       };
-
       # Animation settings
       animations = {
         enabled = true;
@@ -97,7 +121,6 @@
           "workspaces, 1, 6, default"
         ];
       };
-
       # Layout configuration - enhanced dwindle settings
       dwindle = {
         pseudotile = true;
@@ -110,7 +133,6 @@
         use_active_for_splits = true;
         default_split_ratio = 1.0;
       };
-
       # Master layout configuration (alternative)
       master = {
         new_on_top = false;
@@ -119,7 +141,6 @@
         smart_resizing = true;
         drop_at_cursor = true;
       };
-
       # Misc settings - enhanced for better window management
       misc = {
         force_default_wallpaper = -1;
@@ -133,20 +154,15 @@
         enable_swallow = true;
         swallow_regex = "^(kitty)$";
         focus_on_activate = false;
-
       };
-
       # Keybinding configuration
       bind = [
         # Terminal launch - Super+Return → kitty
         "SUPER, Return, exec, kitty"
-
         # Window close - Super+Q
         "SUPER, Q, killactive"
-
         # Application launcher - Super+Space → fuzzel
         "SUPER, Space, exec, fuzzel"
-
         # Workspace switching - Super+[1-9]
         "SUPER, 1, workspace, 1"
         "SUPER, 2, workspace, 2"
@@ -157,7 +173,6 @@
         "SUPER, 7, workspace, 7"
         "SUPER, 8, workspace, 8"
         "SUPER, 9, workspace, 9"
-
         # Window movement to workspaces - Super+Shift+[1-9]
         "SUPER SHIFT, 1, movetoworkspace, 1"
         "SUPER SHIFT, 2, movetoworkspace, 2"
@@ -168,48 +183,40 @@
         "SUPER SHIFT, 7, movetoworkspace, 7"
         "SUPER SHIFT, 8, movetoworkspace, 8"
         "SUPER SHIFT, 9, movetoworkspace, 9"
-
         # Vim-like focus movement - Super+H/J/K/L
         "SUPER, H, movefocus, l"
         "SUPER, J, movefocus, d"
         "SUPER, K, movefocus, u"
         "SUPER, L, movefocus, r"
-
         # Window management keybindings
         "SUPER, F, fullscreen, 0" # Fullscreen toggle
         "SUPER SHIFT, Space, togglefloating" # Floating toggle
-
         # Additional useful window management
         "SUPER, P, pseudo" # Pseudotile toggle
         "SUPER SHIFT, J, togglesplit" # Toggle split direction
         "SUPER, M, exit" # Exit Hyprland
         "SUPER SHIFT, R, forcerendererreload" # Force renderer reload
-
         # Window resizing with Super+Alt combinations
         "SUPER ALT, H, resizeactive, -20 0"
         "SUPER ALT, L, resizeactive, 20 0"
         "SUPER ALT, K, resizeactive, 0 -20"
         "SUPER ALT, J, resizeactive, 0 20"
-
         # Move windows with Super+Shift+vim keys
         "SUPER SHIFT, H, movewindow, l"
         "SUPER SHIFT, L, movewindow, r"
         "SUPER SHIFT, K, movewindow, u"
         "SUPER SHIFT, J, movewindow, d"
       ];
-
       # Mouse bindings for window management
       bindm = [
         "SUPER, mouse:272, movewindow"
         "SUPER, mouse:273, resizewindow"
       ];
     };
-
     # Additional Hyprland configuration from external file
     # This includes window rules, workspace assignments, startup applications, and NVIDIA environment variables
     extraConfig = builtins.readFile ./hyprland/hyprland.conf;
   };
-
   # ===== FUZZEL APPLICATION LAUNCHER CONFIGURATION =====
   # Keyboard-driven application launcher integrated with Hyprland (Super+Space)
   programs.fuzzel = {
@@ -236,7 +243,6 @@
         tabs = 4;
         exit-on-keyboard-focus-loss = "yes";
       };
-
       colors = {
         background = "1e1e2eff";
         text = "cdd6f4ff";
@@ -246,12 +252,10 @@
         selection-match = "f38ba8ff";
         border = "b4befeff";
       };
-
       border = {
         width = 2;
         radius = 8;
       };
-
       key-bindings = {
         cancel = "Escape Control+c";
         execute = "Return KP_Enter Control+m";
@@ -276,7 +280,6 @@
       };
     };
   };
-
   # ===== WAYBAR STATUS BAR CONFIGURATION =====
   # System status bar with workspace indicators, system monitoring, and Hyprland integration
   programs.waybar = {
@@ -293,7 +296,6 @@
     # Load CSS styling from external file
     style = builtins.readFile ./waybar/style.css;
   };
-
   # ===== SYSTEMD USER SERVICES =====
   # Proper session management and service dependencies for Hyprland desktop environment
   systemd.user = {
@@ -306,7 +308,6 @@
         After = [ "graphical-session-pre.target" ];
       };
     };
-
     services.hyprland-autostart = {
       Unit = {
         Description = "Hyprland autostart applications";
@@ -319,11 +320,9 @@
         ExecStart = pkgs.writeShellScript "hyprland-autostart" ''
           # Start waybar with proper dependencies
           ${pkgs.systemd}/bin/systemctl --user start waybar.service
-
           # Ensure proper environment for applications
           ${pkgs.systemd}/bin/systemctl --user import-environment DBUS_SESSION_BUS_ADDRESS XDG_RUNTIME_DIR
           ${pkgs.systemd}/bin/systemctl --user import-environment PATH XDG_DATA_DIRS
-
           # Start any additional desktop services
           ${pkgs.systemd}/bin/systemctl --user start xdg-desktop-portal-hyprland.service || true
           ${pkgs.systemd}/bin/systemctl --user start xdg-desktop-portal.service || true
@@ -334,7 +333,6 @@
       };
     };
   };
-
   # ===== ADDITIONAL PACKAGES =====
   # Essential command-line tools and utilities
   home.packages = with pkgs; [
@@ -349,5 +347,8 @@
     lazydocker # Terminal UI for docker/podman
     # Secrets management tools
     _1password-cli # 1Password CLI tool
+    # Atlassian CLI
+    acli
+    zlib
   ];
 }
