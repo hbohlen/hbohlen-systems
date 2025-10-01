@@ -11,6 +11,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
   outputs =
@@ -19,6 +20,7 @@
       nixpkgs,
       home-manager,
       disko,
+      nixos-hardware,
     }:
     let
       system = "x86_64-linux";
@@ -64,9 +66,10 @@
 
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit disko; };
+          specialArgs = { inherit disko nixos-hardware; };
           modules = [
             disko.nixosModules.disko
+            nixos-hardware.nixosModules.asus-zephyrus-gu603h
             ./infrastructure/nixos/hosts/laptop/hardware-configuration.nix
             ./infrastructure/nixos/hosts/laptop/configuration.nix
 

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   networking.hostName = "laptop";
@@ -21,7 +26,7 @@
   # Keep a few generations in systemd-boot
   boot.loader.systemd-boot.configurationLimit = 7;
 
-  # Allow unfree software
+  # Allow unfree software (same as desktop for consistency)
   nixpkgs.config.allowUnfree = true;
 
   # Firmware
@@ -47,11 +52,31 @@
   # Networking
   networking.networkmanager.enable = true;
 
-  # Laptop-specific: Intel graphics (adjust if you have NVIDIA/AMD)
-  services.xserver.videoDrivers = [ "intel" ];
+  # Laptop graphics - NVIDIA hybrid graphics (ASUS ROG Zephyrus M16 GU603ZW)
+  # Note: Base NVIDIA Prime configuration is provided by nixos-hardware module
+  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+  };
+  
+  # Additional NVIDIA configuration for ROG laptop
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = true; # Enable for hybrid graphics/better battery
+    open = false;
+    nvidiaSettings = true;
+    # Note: Prime offload and bus IDs are configured by nixos-hardware module
+    # If you need to override, uncomment and adjust:
+    # prime = {
+    #   offload = {
+    #     enable = true;
+    #     enableOffloadCmd = true;
+    #   };
+    #   intelBusId = "PCI:0:2:0";
+    #   nvidiaBusId = "PCI:1:0:0";
+    # };
   };
 
   # Hyprland Wayland compositor
@@ -99,12 +124,17 @@
     wireplumber.enable = true;
   };
 
-  # Laptop-specific environment variables
+  # Laptop environment variables (with NVIDIA-specific ones for ROG laptop)
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron/Chromium on Wayland
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GL_GSYNC_ALLOWED = "1";
+    __GL_VRR_ALLOWED = "0";
   };
 
-  # Laptop-specific packages (remove NVIDIA-specific ones)
+  # Installed system packages - matching desktop exactly, plus laptop-specific additions
   environment.systemPackages = with pkgs; [
     vim
     git
@@ -129,20 +159,28 @@
     # Secrets management
     _1password-gui
     _1password
-    # Laptop extras
+    # Laptop-specific power management tools
     powertop
     tlp
-    laptop-mode-tools
+    acpi
+    brightnessctl
+    # Wireless tools
+    iw
+    wpa_supplicant_gui
+    # NVIDIA tools for ROG laptop
+    nvtopPackages.nvidia
   ];
 
-  # Import 1Password secrets management
+  # Import 1Password secrets management (same as desktop)
   imports = [
     ../../secrets/onepassword-secrets.nix
   ];
 
-  # Laptop power management
+  # Laptop-specific power management
   services.tlp.enable = true;
-  services.power-profiles-daemon.enable = true;
+  powerManagement.enable = true;
+  services.thermald.enable = true; # Intel thermal management
+  # Note: auto-cpufreq can conflict with TLP, so we'll use TLP for now
 
   # Enable flakes + new nix CLI
   nix.settings.experimental-features = [
@@ -150,6 +188,6 @@
     "flakes"
   ];
 
-  # State version
+  # State version (same as desktop)
   system.stateVersion = lib.mkDefault "25.05";
 }
