@@ -190,46 +190,6 @@
   
   # Ensure btrfs-specific settings are properly handled
   # The actual mounting of btrfs subvolumes will be handled by disko
-  fileSystems."/" = {
-    # Root filesystem settings - disko will handle subvolume mounting
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=root" "compress=zstd" "noatime" ];
-    neededForBoot = true;
- };
-  
-  fileSystems."/home" = {
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=home" "compress=zstd" "noatime" ];
-  };
-  
- fileSystems."/nix" = {
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=nix" "compress=zstd" "noatime" "nodatacow" ];
-  };
-  
-  fileSystems."/persist" = {
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=persist" "compress=zstd" "noatime" ];
-    neededForBoot = true;
-  };
-  
-  fileSystems."/var/log" = {
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=log" "compress=zstd" "noatime" ];
-    neededForBoot = true;
-  };
-  
-  fileSystems."/tmp" = {
-    device = "/dev/disk/by-label/nixos-root";
-    fsType = "btrfs";
-    options = [ "subvol=tmp" "compress=zstd" "noatime" ];
-  };
-  
   # Additional security settings
 
  # Security settings
