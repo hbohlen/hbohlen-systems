@@ -22,18 +22,18 @@
         mkdir -p /persist/home/hbohlen
 
         # Set up persistent symlinks for system directories
-        if [ ! -L /etc/ssh ] && [ ! -d /persist/etc/ssh/.git ]; then
+        if [ ! -L /etc/ssh ]; then
           rm -rf /etc/ssh 2>/dev/null || true
           ln -sf /persist/etc/ssh /etc/ssh
         fi
         
         # Set up other persistent directories as needed
-        if [ ! -L /var/log ] && [ ! -d /persist/var/log/.git ]; then
+        if [ ! -L /var/log ]; then
           rm -rf /var/log 2>/dev/null || true
           ln -sf /persist/var/log /var/log
         fi
         
-        if [ ! -L /root ] && [ ! -d /persist/root/.git ]; then
+        if [ ! -L /root ]; then
           rm -rf /root 2>/dev/null || true
           ln -sf /persist/root /root
         fi
