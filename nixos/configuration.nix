@@ -49,6 +49,8 @@
     # Locale settings
     i18n.defaultLocale = "en_US.UTF-8";
 
+    users.mutableUsers = false;
+    users.users.root.initialHashedPassword = "$6$ZHwIJqKn6TnBjrhF$k0YYXHl2ZPpeYuCi1s9.BUk8DMJtDNqbIvHDS2IhlaeJfkBh04qZjfF92yxWpdL9wHRaIKRPELQevWIVK92Qv.";
     # User account
     users.users.hbohlen = {
         isNormalUser = true;
@@ -57,7 +59,7 @@
             "wheel"
             "networkmanager"
         ];
-        hashedPassword = "$y$j9T$icyuRBji8tNqQjzpG.EJD1$4H3TuLj/iFmAXUdcxwDwXtVqutgOT3Mb3FgCUyIvVlB:20378";
+        initialHashedPassword = "$6$ZHwIJqKn6TnBjrhF$k0YYXHl2ZPpeYuCi1s9.BUk8DMJtDNqbIvHDS2IhlaeJfkBh04qZjfF92yxWpdL9wHRaIKRPELQevWIVK92Qv.";
     };
 
     # Enable sudo for wheel group without password
