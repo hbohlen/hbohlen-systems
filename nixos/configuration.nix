@@ -83,6 +83,7 @@
         zsh
         oh-my-zsh
         starship
+        pciutils
 
     ];
 
