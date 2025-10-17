@@ -38,11 +38,6 @@
         # AMD GPU configuration specifically for Radeon 860M
         # The amdgpu driver is enabled by default when hardware.graphics is enabled
         # Additional AMD-specific settings can go here
-        hardware.opengl = {
-          enable = true;
-          # driSupport and driSupport32Bit are enabled by default
-        };
-
         # AMD-specific kernel modules
         boot.initrd.kernelModules = [ 
           "amdgpu" # AMD GPU driver
