@@ -179,6 +179,82 @@ If WiFi passwords are lost after reboot:
 
 - Check that `/etc/NetworkManager/system-connections` is in your persist directories
 
+## Advanced Troubleshooting - Booting Back to Live USB
+
+### If Installation Fails or System Won't Boot
+
+**Scenario 1: nixos-install failed with errors**
+
+1. Fix the error in your config files:
+
+- In GitHub repository, navigate to the file and correct the error. Or on different device enter cloned repository to fix the error. Commit changes and push.
+- `git pull` changes from the repository to the LiveIso.
+
+2. Rerun the installation:
+
+```bash
+   nixos-install --flake .#yoga7
+```
+
+**Scenario 2: System won't boot, need to investigate**
+
+1. Boot back to live USB (same as initial installation)
+
+2. Become root and unlock your encrypted drive:
+
+```bash
+   sudo -i
+```
+
+```bash
+   cryptsetup open /dev/nvme0n1p2 cryptroot
+   # Enter encryption password
+```
+
+3. Mount your installed system:
+
+```bash
+mount -o subvol=root /dev/mapper/cryptroot /mnt
+mount -o subvol=nix /dev/mapper/cryptroot /mnt/nix
+mount -o subvol=persist /dev/mapper/cryptroot /mnt/persist
+mount /dev/nvme0n1p1 /mnt/boot
+```
+
+4. Enter the installed system to investigate:
+
+```bash
+nixos-enter
+```
+
+5. Check logs or make fixes:
+
+```bash
+journalctl -xb
+```
+
+6. Exit and reboot:
+
+```bash
+reboot
+```
+
+**Scenario 3: Need to completely start over**
+
+If you want to wipe everything and start fresh:
+
+```bash
+sudo -i
+```
+
+```bash
+nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./disko.nix
+```
+
+
+
+
+
+
 
 
 
