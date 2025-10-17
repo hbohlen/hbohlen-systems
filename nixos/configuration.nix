@@ -57,6 +57,7 @@
             "wheel"
             "networkmanager"
         ];
+        hashedPassword = "$y$j9T$icyuRBji8tNqQjzpG.EJD1$4H3TuLj/iFmAXUdcxwDwXtVqutgOT3Mb3FgCUyIvVlB:20378";
     };
 
     # Enable sudo for wheel group without password
