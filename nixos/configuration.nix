@@ -5,6 +5,8 @@
     imports = [
 
     ];
+    hardware.enableRedistributableFirmware = true;
+
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
@@ -84,6 +86,7 @@
         oh-my-zsh
         starship
         pciutils
+        linux-firmware
 
     ];
 
