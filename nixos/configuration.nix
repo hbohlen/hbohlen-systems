@@ -1,16 +1,19 @@
-
 { config, pkgs, lib, ... }:
 
 {
     imports = [
 
     ];
+    
     hardware.enableRedistributableFirmware = true;
-    # Add this near the top with your other service configurations
+    hardware.firmware = with pkgs; [ linux-firmware ];
+    
     services.fwupd.enable = true;
-    # Add this section to your configuration.nix
-    hardware.firmware = [ pkgs.linux-firmware ];
-
+    
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.extraModprobeConfig = ''
+      options rtw89_core disable_ps_mode=y
+    '';
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
@@ -57,7 +60,7 @@
 
     users.mutableUsers = false;
     users.users.root.initialHashedPassword = "$6$ZHwIJqKn6TnBjrhF$k0YYXHl2ZPpeYuCi1s9.BUk8DMJtDNqbIvHDS2IhlaeJfkBh04qZjfF92yxWpdL9wHRaIKRPELQevWIVK92Qv.";
-    # User account
+    
     users.users.hbohlen = {
         isNormalUser = true;
         description = "Hayden Bohlen";
@@ -91,8 +94,6 @@
         starship
         pciutils
         linux-firmware
-        network-manager
-
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -119,7 +120,6 @@
     services.displayManager.gdm.enable = true;
     services.desktopManager.gnome.enable = true;
    
-
     environment.gnome.excludePackages = with pkgs; [
         gnome-tour
     ];
@@ -143,11 +143,11 @@
             directories = [
                 "dev"
                 "Downloads"
-                { directory = ".ssh"; mode = "0700";  }  # Example of setting mode
+                { directory = ".ssh"; mode = "0700";  }
             ];
             files = [ ];
         };
     };
 
-    system.stateVersion = "25.05"; # Update this when changing NixOS versions
+    system.stateVersion = "25.05";
 }
