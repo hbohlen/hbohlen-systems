@@ -144,6 +144,17 @@
                 "dev"
                 "Downloads"
                 { directory = ".ssh"; mode = "0700";  }
+                # Brave browser profile
+                { directory = ".config/BraveSoftware/Brave-Browser"; mode = "0700"; }
+                { directory = ".config/Code"; mode = "0700"; }
+                { directory = ".config/kitty"; mode = "0700"; }
+                { directory = ".config/oh-my-zsh"; mode = "0700"; }
+                { directory = ".config/starship"; mode = "0700"; }
+                { directory = ".local/share/gnome-shell"; mode = "0700"; }
+                { directory = ".local/share/gnome-settings-daemon"; mode = "0700"; }
+                { directory = ".local/share/gnome-session"; mode = "0700"; }
+                { directory = ".local/share/keyrings"; mode = "0700"; }
+                { directory = ".config/dconf"; mode = "0700"; }
             ];
             files = [ ];
         };
