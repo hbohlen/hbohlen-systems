@@ -136,7 +136,6 @@
 
         files = [
             "/etc/machine-id"
-            "/etc/shadow"
         ];
 
         users.hbohlen = {
