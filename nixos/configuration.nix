@@ -91,9 +91,7 @@
         starship
         pciutils
         linux-firmware
-        wpa_supplicant    # WPA/WPA2 support
-        networkmanager
-        rtw89-firmware  # Add this line
+        network-manager
 
     ];
 
