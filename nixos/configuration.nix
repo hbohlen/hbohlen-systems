@@ -6,6 +6,10 @@
 
     ];
     hardware.enableRedistributableFirmware = true;
+    # Add this near the top with your other service configurations
+    services.fwupd.enable = true;
+    # Add this section to your configuration.nix
+    hardware.firmware = [ pkgs.linux-firmware ];
 
 
     boot.loader.systemd-boot.enable = true;
