@@ -9,7 +9,7 @@
 - [x] 2.1 Create types.ts with TypeScript interfaces for Brave API
 - [x] 2.2 Create brave-search.ts with API wrapper function
 - [x] 2.3 Implement API key retrieval from 1Password
-- [ ] 2.4 Test API connection with actual Brave Search API call
+- [x] 2.4 Test API connection with actual Brave Search API call
 - [x] 2.5 Handle API errors gracefully
 
 ## 3. search_web Tool Implementation
@@ -18,7 +18,7 @@
 - [x] 3.2 Define tool parameters using Typebox (query, count, offset)
 - [x] 3.3 Implement tool execute function with Brave API call
 - [x] 3.4 Format tool result with compact JSON (title, url, description)
-- [ ] 3.5 Test tool with sample searches
+- [x] 3.5 Test tool with sample searches
 
 ## 4. fetch_content Tool Implementation
 
@@ -31,10 +31,10 @@
 
 ## 5. Integration Testing
 
-- [ ] 5.1 Test search_web in pi with real queries
-- [ ] 5.2 Test fetch_content with various URLs
-- [ ] 5.3 Test error handling (invalid URL, API errors)
-- [ ] 5.4 Verify tool results are token-efficient
+- [x] 5.1 Test search_web in pi with real queries
+- [x] 5.2 Test fetch_content with various URLs
+- [x] 5.3 Test error handling (invalid URL, API errors)
+- [x] 5.4 Verify tool results are token-efficient
 
 ## 6. Documentation
 
