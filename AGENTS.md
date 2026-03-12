@@ -115,9 +115,35 @@ bd automatically syncs with git:
 - ✅ Always use `--json` flag for programmatic use
 - ✅ Link discovered work with `discovered-from` dependencies
 - ✅ Check `bd ready` before asking "what should I work on?"
+- ✅ **ALWAYS attach research outputs to beads issues** (see below)
 - ❌ Do NOT create markdown TODO lists
 - ❌ Do NOT use external issue trackers
 - ❌ Do NOT duplicate tracking systems
+
+### Research & Documentation Outputs
+
+When completing research tasks or creating documentation:
+
+1. **Attach summary to beads issue**: Use `bd update <id> --notes "..."` to add key findings directly to the issue
+2. **Write detailed output to file**: Document full research in the specified output location
+3. **Include both**: The beads notes should summarize findings, with full details in the output file
+
+**Example workflow:**
+```bash
+# 1. Claim and work on research task
+bd update <id> --claim
+
+# 2. Write detailed output to file
+write content to docs/superpowers/research/<filename>.md
+
+# 3. Attach summary to beads issue BEFORE closing
+bd update <id> --notes "Key findings: 1) X, 2) Y, 3) Z. Output: docs/superpowers/research/<filename>.md"
+
+# 4. Close with reference to notes
+bd close <id> --reason "Research complete. See notes for findings."
+```
+
+**Why this matters**: Beads issues survive session compaction and are searchable. File-only documentation can be lost or forgotten. Always attach context to the issue itself.
 
 For more details, see README.md and docs/QUICKSTART.md.
 
