@@ -1,50 +1,37 @@
-## 1. Extension Setup
+## 1. Package Installation
 
-- [x] 1.1 Create directory ~/.pi/agent/extensions/brave-search/
-- [x] 1.2 Create index.ts with basic extension structure
-- [x] 1.3 Verify extension loads in pi (/reload)
+- [x] 1.1 Verify pi CLI is available and version supports npm installs
+- [x] 1.2 Install pi-web-access package: `pi install npm:pi-web-access`
+- [x] 1.3 Verify package installed in node_modules
 
-## 2. Brave Search API Integration
+## 2. Configuration Setup
 
-- [x] 2.1 Create types.ts with TypeScript interfaces for Brave API
-- [x] 2.2 Create brave-search.ts with API wrapper function
-- [x] 2.3 Implement API key retrieval from 1Password
-- [x] 2.4 Test API connection with actual Brave Search API call
-- [x] 2.5 Handle API errors gracefully
+- [x] 2.1 Create .pi/web-search.json config file
+- [x] 2.2 Add API keys if needed (Perplexity, Gemini) - Keys not added yet (optional)
+- [x] 2.3 Configure provider settings (auto/perplexity/gemini)
+- [x] 2.4 Verify .pi directory is gitignored
 
-## 3. search_web Tool Implementation
+## 3. Extension Loading
 
-- [x] 3.1 Register search_web tool in index.ts
-- [x] 3.2 Define tool parameters using Typebox (query, count, offset)
-- [x] 3.3 Implement tool execute function with Brave API call
-- [x] 3.4 Format tool result with compact JSON (title, url, description)
-- [x] 3.5 Test tool with sample searches
+- [x] 3.1 pi-web-access registered in settings.json packages
+- [x] 3.2 Brave Search extension removed (conflicted with pi-web-access)
+- [x] 3.3 Verify pi loads without errors
 
-## 4. fetch_content Tool Implementation
+## 4. Optional Video Dependencies
 
-- [x] 4.1 Create content-fetcher.ts with URL fetching logic
-- [x] 4.2 Register fetch_content tool in index.ts
-- [x] 4.3 Define tool parameters using Typebox (urls array)
-- [x] 4.4 Implement HTML content extraction
-- [x] 4.5 Handle extraction errors and failures gracefully
-- [x] 4.6 Add content size limiting for token efficiency
+- [ ] 4.1 Check if ffmpeg is installed
+- [ ] 4.2 Check if yt-dlp is installed
+- [ ] 4.3 Install via brew if needed for video features
 
-## 5. Integration Testing
+## 5. Documentation
 
-- [x] 5.1 Test search_web in pi with real queries
-- [x] 5.2 Test fetch_content with various URLs
-- [x] 5.3 Test error handling (invalid URL, API errors)
-- [x] 5.4 Verify tool results are token-efficient
+- [x] 5.1 Document setup steps in project README (in OpenSpec proposal)
+- [ ] 5.2 Document API key setup if needed
+- [ ] 5.3 Document video dependency installation
 
-## 6. Documentation
+## 6. Future Enhancements (Out of Scope for Initial Release)
 
-- [x] 6.1 Add extension documentation in index.ts comments
-- [x] 6.2 Document 1Password key location and setup
-- [x] 6.3 Create README.md with usage examples
-
-## 7. Future Enhancements (Out of Scope for Initial Release)
-
-- [ ] 7.1 Research gap analysis tool
-- [ ] 7.2 Bead integration for research tasks
-- [ ] 7.3 Search result caching
-- [ ] 7.4 Brave AI summary integration
+- [ ] 6.1 Research gap analysis tool
+- [ ] 6.2 Bead integration for research tasks
+- [ ] 6.3 Search result caching
+- [ ] 6.4 Auto-condense configuration

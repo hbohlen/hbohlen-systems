@@ -1,4 +1,9 @@
-
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Node modules
+node_modules/
+
+# Pi web search config (contains API keys)
+.pi/web-search.json

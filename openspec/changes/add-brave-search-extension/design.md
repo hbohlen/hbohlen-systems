@@ -1,129 +1,160 @@
 ## Context
 
-This design covers the implementation of a native pi extension for web search and content fetching, integrated with Brave Search API. The extension will support the spec-driven research workflow by providing tools for:
+This design covers the installation and configuration of the `pi-web-access` package for web search and content fetching in pi. The extension supports the spec-driven research workflow by providing tools for:
 
-1. **Web Search** - Query Brave Search API for relevant results
-2. **Content Fetching** - Extract content from URLs for research
-3. **Gap Analysis** - Analyze specs for knowledge gaps (future)
-4. **Bead Integration** - Create research tasks in beads (future)
+1. **Web Search** - Query Perplexity AI or Gemini (auto-selects best provider)
+2. **Content Fetching** - Extract content from URLs, GitHub repos, YouTube videos, PDFs
+3. **Stored Content Retrieval** - Access previous search results
+4. **Video Understanding** - Full transcripts, visual descriptions, frame extraction
 
 ### Current State
 - pi has built-in tools: `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`
-- Extensions can register custom tools via `pi.registerTool()`
-- Extensions support native `fetch` for HTTP requests (see antigravity-image-gen.ts example)
-- 1Password CLI (`op`) available for secure credential retrieval
+- Extensions can be installed via `pi install npm:<package-name>`
+- Extensions support native `fetch` for HTTP requests
+- The project has a `.pi/` directory for local configuration
 
 ### Constraints
 - No MCP tools - must be native pi extension
 - Token efficient - compact JSON responses vs. bash stdout
-- API key stored in 1Password, not in code or config files
+- Package installed locally in project (not globally)
+- API keys in config file or environment variables
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Create `search_web` tool that wraps Brave Search API
-- Create `fetch_content` tool for URL content extraction
-- Handle API key via 1Password integration
-- Make tools reusable and independently callable
-- Follow pi extension patterns from existing examples
+- Install `pi-web-access` package locally via npm
+- Configure the package with local settings
+- Verify `search_web`, `fetch_content`, `get_search_content` tools work
+- Configure optional API keys (Perplexity, Gemini) if needed
+- Document setup process for future reference
+- Handle optional video dependencies (ffmpeg, yt-dlp)
 
 **Non-Goals:**
 - Full spec validation workflow (separate change)
 - Research output templates (documented here, implemented separately)
 - AI summarization of search results (use LLM for that)
-- Image/video/news search (web search only for now)
+- Implementing video frame extraction (out of scope for initial setup)
 
 ## Decisions
 
-### 1. Extension Structure
-**Decision**: Single directory extension with index.ts
+### 1. Package Installation Location
+**Decision**: Install locally in project under `./node_modules/pi-web-access/`
 
 ```
-~/.pi/agent/extensions/brave-search/
-├── index.ts              # Main extension entry point
-├── brave-search.ts       # Brave Search API wrapper
-├── content-fetcher.ts   # URL content extraction
-└── types.ts             # TypeScript interfaces
-```
-
-**Rationale**: Matches pi's extension patterns. Single file works for small extensions, but content-fetcher is complex enough to warrant separation.
-
-### 2. API Key Handling
-**Decision**: Execute `op read` via Node.js child_process in extension
-
-```typescript
-import { execSync } from "node:child_process";
-
-function getApiKey(): string {
-  return execSync("op read 'op://hbohlen-systems/brave-search/apiKey'", { encoding: "utf-8" }).trim();
-}
+/home/hbohlen/dev/hbohlen-systems/
+├── node_modules/
+│   └── pi-web-access/     # npm package
+├── .pi/
+│   └── web-search.json    # local config (gitignored)
 ```
 
 **Alternatives considered**:
-- Config file with `!op read` - Works but adds file management
-- Environment variable - Less secure, requires user to set manually
-- Prompt user on first use - Adds complexity, more code
+- Global installation (`~/.pi/agent/extensions/`) - Not project-specific
+- Manual file copy - Loses npm update benefits
 
-**Rationale**: Direct execution is simple, secure (key never logged or stored), and leverages existing 1Password setup.
+**Rationale**: Local installation keeps project self-contained and portable. The `.pi/` directory already exists for pi configuration.
 
-### 3. Tool Output Format
-**Decision**: Compact JSON with essential fields only
+### 2. Configuration Storage
+**Decision**: Store config in `.pi/web-search.json` (gitignored)
 
-```typescript
-// search_web result
+```json
 {
-  results: [
-    { title: string, url: string, description: string }
-  ],
-  total: number,
-  query: string
+  "perplexityApiKey": "pplx-...",
+  "geminiApiKey": "AIza...",
+  "provider": "auto",
+  "curateWindow": 10,
+  "autoFilter": true,
+  "githubClone": {
+    "enabled": true,
+    "maxRepoSizeMB": 350,
+    "cloneTimeoutSeconds": 30,
+    "clonePath": "/tmp/pi-github-repos"
+  },
+  "youtube": {
+    "enabled": true,
+    "preferredModel": "gemini-3-flash-preview"
+  }
 }
 ```
 
 **Alternatives considered**:
-- Full Brave response - Too verbose, includes metadata
-- Minimal (titles only) - Loses context for research
+- 1Password integration - More secure but adds complexity
+- Environment variables - Less portable
+- No config - Works with Chrome auth on macOS
 
-**Rationale**: Balance between token efficiency and useful context. LLM can request more detail via fetch_content if needed.
+**Rationale**: Config file is portable, gitignored for security, and supports all customization options. Can start empty (zero-config) and add keys as needed.
 
-### 4. Content Fetching Strategy
-**Decision**: Simple curl-based extraction with readability heuristics
+### 3. Package Loading
+**Decision**: Use `pi install npm:pi-web-access` command
 
-```typescript
-async function fetchContent(url: string): Promise<{
-  title: string;
-  content: string;
-  relevantSnippets?: string[];
-}>
+```bash
+pi install npm:pi-web-access
 ```
 
 **Alternatives considered**:
-- Full HTML parsing library - Adds dependency
-- Browser automation - Overkill, too heavy
+- Manual npm install + pi config - More steps
+- Copy files manually - Loses package management
 
-**Rationale**: Use built-in tools where possible. The extension can use `fetch` + basic HTML parsing. For complex pages, can fall back to `bash` with `curl` and `grep`.
+**Rationale**: Official installation method, handles dependencies automatically.
 
-### 5. Error Handling
-**Decision**: Graceful degradation with informative errors
+### 4. Authentication Strategy
+**Decision**: Use API keys from config file for non-Chrome platforms
 
-- API errors: Return error in tool result, don't throw
-- Rate limiting: Detect and notify user
-- Network errors: Return partial results if possible
+- macOS with Chrome: Zero-config (reads Chrome cookies)
+- Other platforms: Use config file with API keys
+- Environment variables override config (`GEMINI_API_KEY`, `PERPLEXITY_API_KEY`)
 
-**Rationale**: Agent should continue working even if search fails. Errors should be actionable.
+**Rationale**: Flexible approach - works out of box on macOS, configurable elsewhere.
+
+### 5. Video Dependencies
+**Decision**: Install ffmpeg and yt-dlp for full video capabilities
+
+```bash
+brew install ffmpeg yt-dlp
+```
+
+**Alternatives considered**:
+- Skip video features - Reduced capability
+- Install on-demand - Adds complexity
+
+**Rationale**: Enables full video understanding. Can be skipped if not needed.
+
+## Implementation Steps
+
+### 1. Install pi-web-access package
+```bash
+pi install npm:pi-web-access
+```
+
+### 2. Create local config
+Create `.pi/web-search.json` with appropriate settings.
+
+### 3. Update .gitignore
+Ensure `.pi/web-search.json` is gitignored (should already be).
+
+### 4. Verify installation
+Test tools in pi:
+- `web_search({ query: "test" })`
+- `fetch_content({ url: "https://example.com" })`
+
+### 5. Optional: Install video dependencies
+```bash
+brew install ffmpeg yt-dlp
+```
 
 ## Risks / Trade-offs
 
 | Risk | Impact | Mitigation |
-|------|--------|------------|
-| Brave API key expires/rotates | Search stops working | Document key rotation process, consider caching with TTL |
-| Rate limiting | Search blocked temporarily | Implement retry with backoff, notify user |
-| Page content extraction fails | Research incomplete | Fall back to search results snippets |
-| 1Password not available | Can't get API key | Detect and show clear error message |
+|------|--------|-------------|
+| API keys expire/rotate | Search stops working | Document key rotation process |
+| Rate limiting | Search blocked temporarily | Provider auto-retries, fallback chain |
+| Page content extraction fails | Research incomplete | Multiple fallback strategies built-in |
+| Chrome auth unavailable | Need API keys on non-macOS | Config file with keys |
+| Package not found | Installation fails | Verify package name and npm connectivity |
 
 ## Open Questions
 
-1. Should we cache search results to reduce API calls?
-2. Should fetch_content use a library like `cheerio` or built-in HTML parsing?
-3. Should we add a config option for result count (vs hardcoded default)?
-4. How to handle Brave's AI summary feature (more token-efficient but less flexible)?
+1. Should we commit the node_modules or use .gitignore for them?
+2. Should we configure a specific provider (perplexity vs gemini)?
+3. Should we enable auto-condense for multi-query searches?
+4. Where should GitHub repos be cloned (temp vs project dir)?

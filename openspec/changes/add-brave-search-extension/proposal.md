@@ -1,24 +1,27 @@
 ## Why
 
-The pi-coding-agent currently lacks native web search capabilities. When performing research for spec-driven development (as part of the `spec-driven-research` workflow), agents need to search for package documentation, code snippets, best practices, and standards. Currently, this requires external MCP tools which are not token-efficient or context-efficient. A native pi extension using Brave Search API will provide reusable, efficient web search without MCP overhead.
+The pi-coding-agent currently lacks native web search capabilities. When performing research for spec-driven development (as part of the `spec-driven-research` workflow), agents need to search for package documentation, code snippets, best practices, and standards. Currently, this requires external MCP tools which are not token-efficient or context-efficient. The `pi-web-access` package provides a native pi extension with zero-config Chrome-based authentication or optional API keys, web search, content extraction, and video understanding.
 
 ## What Changes
 
-- Create a new pi extension: `brave-search` at `~/.pi/agent/extensions/brave-search/`
-- Register the `search_web` tool for performing web searches via Brave Search API
+- Install the `npm:pi-web-access` package locally in the project
+- Configure the package with local settings in `.pi/web-search.json`
+- Register the `search_web` tool for performing web searches
 - Register the `fetch_content` tool for extracting content from URLs
-- Store Brave API key in 1Password and retrieve via `op` CLI
-- Create integration with beads for research task management
-- Create integration with OpenSpec for spec validation and gap analysis
+- Register the `get_search_content` tool for retrieving stored content
+- Create GitHub integration for cloning repos during research
+- Optional: Install ffmpeg and yt-dlp for video frame extraction
 
 ## Capabilities
 
 ### New Capabilities
 
-- **brave-search-api**: Native Brave Search API integration for web search
-- **content-fetcher**: URL content extraction for research
-- **research-gap-analysis**: LLM-driven analysis of specs to identify knowledge gaps
-- **research-bead-creation**: Integration with beads for creating research tasks from gaps
+- **web_search**: Native web search via Perplexity AI or Gemini (auto-selects best provider)
+- **fetch_content**: URL content extraction for research, GitHub repos, YouTube videos, PDFs
+- **get_search_content**: Retrieve stored content from previous searches
+- **YouTube understanding**: Full video transcripts, visual descriptions via Gemini
+- **GitHub cloning**: Clone repos locally for real file exploration
+- **Video frame extraction**: Extract frames at specific timestamps (requires ffmpeg/yt-dlp)
 
 ### Modified Capabilities
 
@@ -26,11 +29,11 @@ The pi-coding-agent currently lacks native web search capabilities. When perform
 
 ## Impact
 
-- New extension directory: `~/.pi/agent/extensions/brave-search/`
-- New tools available to pi: `search_web`, `fetch_content`
-- Integration with beads CLI for research task management
-- Integration with OpenSpec for spec validation workflow
-- Uses Brave Search Web API with API key from 1Password
+- New npm package: `pi-web-access` installed locally
+- New config file: `.pi/web-search.json` (gitignored)
+- New tools available to pi: `search_web`, `fetch_content`, `get_search_content`
+- Optional: Local binaries for video processing (`ffmpeg`, `yt-dlp`)
+- Zero-config with Chrome (macOS) or API keys (perplexity/gemini)
 
 ## Non-Goals
 
