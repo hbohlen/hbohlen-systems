@@ -7,3 +7,6 @@
 # Nix build results
 result
 result-*
+
+# Git worktrees
+.worktrees/
