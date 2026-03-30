@@ -46,6 +46,11 @@
           # Set starship config
           export STARSHIP_CONFIG=${./config/starship.toml}
 
+          # Set fish config directory for this shell
+          export XDG_CONFIG_HOME="$PWD/.nix-devshell-config"
+          mkdir -p "$XDG_CONFIG_HOME/fish"
+          cp ${./config/config.fish} "$XDG_CONFIG_HOME/fish/config.fish"
+
           # Start fish if not already in fish
           if [[ -z "$FISH_VERSION" ]]; then
             exec ${pkgs.fish}/bin/fish
