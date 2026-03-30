@@ -1,0 +1,54 @@
+# Minimal, ADHD-friendly starship config
+# Shows: directory (truncated), git branch + status
+
+format = """
+$directory$git_branch$git_status
+$character"""
+
+# Directory - show current location, truncate if deep
+[directory]
+truncation_length = 3
+truncation_symbol = ".../"
+format = "[$path]($style) "
+style = "cyan"
+
+# Git branch - show current branch
+[git_branch]
+symbol = ""
+format = "[$symbol$branch]($style) "
+style = "purple"
+
+# Git status - show dirty state only
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "yellow"
+conflicted = "✘"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+up_to_date = ""
+untracked = "?"
+stashed = ""
+modified = "✎"
+staged = "+"
+renamed = "→"
+deleted = "✘"
+
+# Character prompt
+[character]
+success_symbol = "[>](green)"
+error_symbol = "[>](red)"
+
+# Disable everything else
+[username]
+disabled = true
+[hostname]
+disabled = true
+[time]
+disabled = true
+[cmd_duration]
+disabled = true
+[line_break]
+disabled = true
+[battery]
+disabled = true
