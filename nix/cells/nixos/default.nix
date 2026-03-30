@@ -2,7 +2,7 @@
 {
   flake.nixosConfigurations = {
     hbohlen-01 = inputs.nixpkgs.lib.nixosSystem {
-      system = "aarch64-linux";
+      system = "x86_64-linux";
       modules = [
         inputs.disko.nixosModules.disko
         ./modules/disko.nix

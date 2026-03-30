@@ -1,33 +1,32 @@
 # Base NixOS configuration
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Hetzner-compatible EFI GRUB bootloader
+  boot.loader.grub.enable = true;
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.device = "nodev";
+  boot.loader.efi.canTouchEfiVariables = false;
 
   # Network
   networking.useDHCP = true;
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
-  # SSH
+  # SSH key-only auth
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
+      PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
     };
   };
 
-  # User
+  # User base definition; keys are assigned in host module
   users.users.hbohlen = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public key here (will be set in host config)
-    ];
   };
 
   # Sudo
