@@ -73,7 +73,7 @@ Operational requirements:
 - Keep same module location.
 - Use Btrfs on root partition with subvolumes:
   - `/`
-  - `/nix` with mount options including `compress` and `noatime` (exact options finalized in implementation patch)
+  - `/nix` with mount options `[ "compress=zstd" "noatime" ]`
   - `/home`
   - `/var`
   - `/tmp`
