@@ -1,7 +1,14 @@
 { inputs, ... }:
 {
-  # NixOS configurations using disko for declarative disk partitioning
-  # This cell is imported by the flake and provides NixOS system configurations
-
-  flake.nixosModules.disko = inputs.disko.nixosModules.disko;
+  flake.nixosConfigurations = {
+    hbohlen-01 = inputs.nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [
+        inputs.disko.nixosModules.disko
+        ./modules/disko.nix
+        ./modules/base.nix
+        ./hosts/hbohlen-01/default.nix
+      ];
+    };
+  };
 }
