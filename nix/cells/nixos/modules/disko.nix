@@ -1,6 +1,34 @@
-# Disko disk configuration module
-{ ... }:
+{ config, ... }:
+
 {
-  # Disk configuration will be added here
-  # See: https://github.com/nix-community/disko
+  disko.devices = {
+    disk.main = {
+      device = "/dev/sda";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          boot = {
+            name = "boot";
+            size = "512M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
+            };
+          };
+          root = {
+            name = "root";
+            size = "100%";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/";
+            };
+          };
+        };
+      };
+    };
+  };
 }
