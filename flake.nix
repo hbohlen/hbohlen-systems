@@ -8,6 +8,10 @@
       url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -16,6 +20,7 @@
 
       imports = [
         ./nix/cells/devshells
+        ./nix/cells/nixos
       ];
     };
 }
