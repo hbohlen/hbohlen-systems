@@ -121,6 +121,9 @@ git commit -m "chore: create dendritic cells directory structure"
           direnv
           nix-direnv
 
+          # Nix tooling
+          determinate-nix
+
           # Navigation & search
           eza
           ripgrep
@@ -478,7 +481,7 @@ Expected: Fish version printed (e.g., "fish, version 3.x.x")
 
 **Step 2: Test packages availability**
 
-Run: `nix develop --command fish -c "which neovim rg eza zoxide direnv pi"`
+Run: `nix develop --command fish -c "which neovim rg eza zoxide direnv determinate-nix pi"`
 
 Expected: All paths printed
 
@@ -514,7 +517,7 @@ After all tasks complete, verify:
 
 - [ ] `nix develop` enters a shell with fish as the default
 - [ ] `fish` shows starship prompt with git info
-- [ ] All packages available: neovim, rg, eza, zoxide, direnv, pi
+- [ ] All packages available: neovim, rg, eza, zoxide, direnv, determinate-nix, pi
 - [ ] `direnv allow` + entering project auto-activates the shell (user tests manually)
 - [ ] `z <partial-path>` jumps to matching directory
 - [ ] `abbr -a` shows the defined abbreviations

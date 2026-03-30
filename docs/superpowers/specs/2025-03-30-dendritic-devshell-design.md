@@ -42,12 +42,13 @@ hbohlen-systems/
 | **pi from llm-agents.nix** | Immediate access to the tool you want to experiment with |
 | **nixos-unstable** | Latest packages, good for development tools |
 
-## Package List
+### Package List
 
 ### Core
 - `fish` — shell
 - `starship` — prompt (minimal config)
 - `direnv` + `nix-direnv` — environment auto-loading
+- `determinate-nix` — Determinate Nix installer for flakes
 
 ### Navigation & Search
 - `eza` — modern `ls` replacement
