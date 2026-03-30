@@ -1,5 +1,8 @@
 # Base NixOS configuration
-{ ... }:
+{ config, pkgs, ... }:
+
 {
-  # Base system configuration will be added here
+  # Bootloader
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 }
