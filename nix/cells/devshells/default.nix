@@ -51,8 +51,8 @@
           mkdir -p "$XDG_CONFIG_HOME/fish"
           cp ${./config/config.fish} "$XDG_CONFIG_HOME/fish/config.fish"
 
-          # Start fish if not already in fish
-          if [[ -z "$FISH_VERSION" ]]; then
+          # Start fish if not already in fish and running interactively
+          if [[ -z "$FISH_VERSION" && -t 0 ]]; then
             exec ${pkgs.fish}/bin/fish
           fi
         '';
