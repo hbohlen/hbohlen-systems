@@ -42,7 +42,23 @@ hbohlen-systems/
 | **pi from llm-agents.nix** | Immediate access to the tool you want to experiment with |
 | **nixos-unstable** | Latest packages, good for development tools |
 
-### Package List
+## Implementation Notes
+
+### Package Substitution
+- **Expected:** `determinate-nix` (in original spec)
+- **Actual:** `nix` (standard nix package)
+- **Reason:** `determinate-nix` package does not exist in nixpkgs
+
+### Critical ShellHook Fix
+The shellHook must check for interactive terminal before exec-ing to fish:
+```bash
+if [[ -z "$FISH_VERSION" && -t 0 ]]; then
+  exec fish
+fi
+```
+Without `[[ -t 0 ]]`, `nix develop --command` fails because fish unconditionally replaces the shell process.
+
+## Package List
 
 ### Core
 - `fish` — shell
