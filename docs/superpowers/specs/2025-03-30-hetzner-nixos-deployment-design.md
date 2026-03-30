@@ -29,7 +29,7 @@ Your laptop → nixos-anywhere → Hetzner Rescue (kexec) → NixOS install → 
 ### Server Specs
 
 - **Type:** cax11 (ARM, 2 cores, 4GB RAM, 40GB disk)
-- **Location:** hel1 (Helsinki) or fsn1/nbg1 (Germany)
+- **Location:** hel1 (Helsinki)
 - **Architecture:** aarch64-linux
 - **Cost:** ~€3.29/month
 
@@ -74,7 +74,7 @@ nix/
 |---------|-------|
 | SSH | Enabled, key-only auth, port 22 |
 | Firewall | Allow SSH only |
-| User | Reuse devshell username |
+| User | hbohlen |
 | Sudo | Passwordless sudo for user |
 | Timezone | America/Chicago |
 | Locale | en_US.UTF-8 |
@@ -101,6 +101,10 @@ nix/
 
 2. Add SSH public key to Hetzner Cloud:
    ```bash
+   # Find your SSH key (usually ~/.ssh/id_ed25519.pub or ~/.ssh/id_rsa.pub)
+   ls ~/.ssh/*.pub
+   
+   # Add it to Hetzner (replace with your actual key path)
    hcloud ssh-key create --name hbohlen-key --public-key-from-file ~/.ssh/id_ed25519.pub
    ```
 
@@ -123,7 +127,7 @@ nix/
    sleep 30  # Wait for rescue to come up
    ```
 
-3. Deploy with nixos-anywhere:
+3. Deploy with nixos-anywhere (no installation needed, runs via nix):
    ```bash
    SERVER_IP=$(hcloud server ip hbohlen-01)
    nix run github:nix-community/nixos-anywhere -- \
@@ -131,7 +135,7 @@ nix/
      --target-host root@$SERVER_IP
    ```
 
-4. Server reboots automatically. Verify access:
+4. Server reboots automatically. Verify access (ssh as hbohlen):
    ```bash
    ssh hbohlen@$SERVER_IP
    ```
