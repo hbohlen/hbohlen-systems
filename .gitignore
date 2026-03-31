@@ -10,3 +10,6 @@ result-*
 
 # Git worktrees
 .worktrees/
+
+# Deployment artifacts
+deploy.log

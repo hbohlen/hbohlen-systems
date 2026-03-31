@@ -1,33 +1,37 @@
 # Base NixOS configuration
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Hetzner Cloud can be picky about firmware mode, so install GRUB in a
+  # dual-mode layout: BIOS to the disk itself and EFI to the ESP.
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.efiInstallAsRemovable = true;
+  boot.loader.efi.canTouchEfiVariables = false;
+
+  # Keep serial console output available for cloud-console debugging.
+  boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty1" ];
 
   # Network
   networking.useDHCP = true;
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
-  # SSH
+  # SSH key-only auth
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
+      PermitRootLogin = "prohibit-password";
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
     };
   };
 
-  # User
+  # User base definition; keys are assigned in host module
   users.users.hbohlen = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public key here (will be set in host config)
-    ];
   };
 
   # Sudo
