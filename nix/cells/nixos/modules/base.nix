@@ -53,13 +53,6 @@
   users.users.hbohlen.shell = pkgs.fish;
   programs.fish.enable = true;
 
-  # Tailscale
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-    useRoutingFeatures = "client";
-  };
-
   # Nix settings
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
