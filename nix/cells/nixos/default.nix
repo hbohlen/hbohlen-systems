@@ -10,6 +10,7 @@
         ./modules/ssh-hardening.nix
         ./modules/tailscale-enhanced.nix
         ./modules/fail2ban.nix
+        ./modules/opnix-bootstrap.nix
         ./hosts/hbohlen-01/default.nix
       ];
     };
