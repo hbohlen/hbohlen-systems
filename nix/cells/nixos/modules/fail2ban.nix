@@ -6,36 +6,42 @@
     
     # Global settings
     maxretry = 3;
-    findtime = "10m";
     bantime = "1h";
     
-    # Extra daemon config
-    extraDaemonConfig = ''
-      [DEFAULT]
-      backend = systemd
-      usedns = no
-      logencoding = utf-8
-    '';
+    # Daemon settings (new attribute-based format)
+    daemonSettings = {
+      DEFAULT = {
+        backend = "systemd";
+        usedns = "no";
+        logencoding = "utf-8";
+        findtime = "10m";
+      };
+    };
     
     # SSH jail for brute force protection
     jails = {
-      sshd = ''
-        enabled = true
-        filter = sshd
-        action = iptables-multiport[name=SSH, port="ssh", protocol=tcp]
-        logpath = /var/log/auth.log
-        backend = %(sshd_backend)s
-      '';
+      sshd = {
+        enabled = true;
+        settings = {
+          filter = "sshd";
+          action = "iptables-multiport[name=SSH, port=\"ssh\", protocol=tcp]";
+          logpath = "/var/log/auth.log";
+          backend = "systemd";
+        };
+      };
       
       # Additional protection for Tailscale SSH (logs to same auth.log)
-      sshd-tailscale = ''
-        enabled = true
-        filter = sshd
-        action = iptables-multiport[name=SSH-TAILSCALE, port="ssh", protocol=tcp]
-        logpath = /var/log/auth.log
-        maxretry = 5
-        findtime = 15m
-      '';
+      sshd-tailscale = {
+        enabled = true;
+        settings = {
+          filter = "sshd";
+          action = "iptables-multiport[name=SSH-TAILSCALE, port=\"ssh\", protocol=tcp]";
+          logpath = "/var/log/auth.log";
+          maxretry = 5;
+          findtime = "15m";
+          backend = "systemd";
+        };
+      };
     };
   };
   
