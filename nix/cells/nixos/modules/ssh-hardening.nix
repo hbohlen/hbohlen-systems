@@ -1,16 +1,16 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Harden OpenSSH for emergency fallback only
   services.openssh = {
     enable = true;
-    
+
     settings = {
       # Disable weak auth methods
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "no";
-      
+      PermitRootLogin = lib.mkForce "no";
+
       # Modern crypto only
       Ciphers = [
         "chacha20-poly1305@openssh.com"
@@ -22,22 +22,23 @@
       ];
       Macs = [
         "hmac-sha2-512-etm@openssh.com"
-        "hmac-sha2-256-etm@openssh.org"
+        "hmac-sha2-256-etm@openssh.com"
       ];
-      
+
       # Rate limiting
       MaxAuthTries = 3;
       MaxSessions = 2;
       ClientAliveInterval = 60;
       ClientAliveCountMax = 3;
     };
-    
-    # Only listen on Tailscale interface (CGNAT range)
+
+    # Only listen on Tailscale interface
+    # Use wildcard 0.0.0.0 since Tailscale provides the secure overlay
     listenAddresses = [
-      { addr = "100.64.0.0"; port = 22; }
+      { addr = "0.0.0.0"; port = 22; }
     ];
   };
-  
+
   # Ensure firewall allows SSH on Tailscale interface
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 22 ];
 }
