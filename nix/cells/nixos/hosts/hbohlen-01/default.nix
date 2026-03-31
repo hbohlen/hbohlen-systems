@@ -4,7 +4,7 @@ let
   deployKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICP6MnCIoDGFnx42wAmVgoNxaHxEtRnOF10d3q/xOIZG hbohlen@hetzner";
 in
 {
-  imports = lib.optional (builtins.pathExists ./hardware-configuration.nix) ./hardware-configuration.nix;
+  imports = lib.optionals (builtins.pathExists ./hardware-configuration.nix) [ ./hardware-configuration.nix ];
 
   # Hostname
   networking.hostName = "hbohlen-01";
