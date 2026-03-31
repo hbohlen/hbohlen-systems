@@ -1,0 +1,68 @@
+// tailscale/acl.hujson
+// Tailscale ACL policy for hbohlen infrastructure
+// Apply via: tailscale login --advertise-tags=tag:server
+
+{
+  // Define user groups
+  "groups": {
+    "group:admin": ["hbohlen@github"],
+  },
+
+  // Define device tags and their owners
+  "tagOwners": {
+    "tag:server": ["group:admin"],
+    "tag:prod": ["group:admin"],
+    "tag:dev": ["group:admin"],
+  },
+
+  // Access control rules
+  "acls": [
+    // Admin can access all devices and all ports
+    {
+      "action": "accept",
+      "src": ["group:admin"],
+      "dst": ["*:*"]
+    },
+
+    // Servers can communicate with each other on HTTPS
+    {
+      "action": "accept",
+      "src": ["tag:server"],
+      "dst": ["tag:server:443"]
+    },
+
+    // Dev servers can access prod monitoring
+    {
+      "action": "accept",
+      "src": ["tag:dev"],
+      "dst": ["tag:prod:9100"]  // Prometheus node exporter
+    },
+  ],
+
+  // SSH access policy (Tailscale SSH)
+  "ssh": [
+    // Admin can SSH to any server as any user (with check)
+    {
+      "action": "check",
+      "src": ["group:admin"],
+      "dst": ["tag:server"],
+      "users": ["autogroup:nonroot", "root"]
+    },
+    
+    // Admin can SSH to prod as non-root only
+    {
+      "action": "check",
+      "src": ["group:admin"],
+      "dst": ["tag:prod"],
+      "users": ["autogroup:nonroot"]
+    },
+  ],
+
+  // Device posture / attributes (for future expansion)
+  "nodeAttrs": [
+    {
+      "target": ["tag:server"],
+      "attr": ["funnel"]
+    },
+  ],
+}
