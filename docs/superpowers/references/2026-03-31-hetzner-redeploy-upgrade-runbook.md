@@ -277,3 +277,75 @@ Good next improvements if this becomes a repeated workflow:
 - ignore or rotate `deploy.log`
 - document snapshot/backup procedure before destructive redeploys
 - add explicit validation for `TYPE` + `LOCATION`
+
+## 10. If Tailscale is already manually enabled: bootstrap 1Password + opnix
+
+Use this when:
+- server is already up
+- you already ran `tailscale up --authkey=...` manually
+- you now want `/etc/opnix-token` and Home Manager env wiring on that host
+
+### Step 1: Ensure the relay machine has the current opnix token in setec
+
+On `hbohlen-01` (or any host with `op` signed in and `tailscale setec` access):
+
+```bash
+TOKEN="$(op read op://hbohlen-systems/opnix/token --no-newline)"
+tailscale setec put opnix-token "$TOKEN"
+tailscale setec status
+```
+
+### Step 2: Apply this repo's NixOS config to the existing server
+
+From your local repo checkout:
+
+```bash
+nixos-rebuild switch --flake .#hbohlen-01 --target-host hbohlen@<server-ip> --use-remote-sudo
+```
+
+Why this step matters:
+- installs `tailscale` and `1password-cli` (`_1password-cli`)
+- installs the `opnix-bootstrap` systemd oneshot service
+- installs Home Manager config that sets `OP_SERVICE_ACCOUNT_TOKEN_FILE=/etc/opnix-token`
+
+### Step 3: Run the bootstrap service now
+
+On the target server:
+
+```bash
+sudo systemctl start opnix-bootstrap.service
+sudo systemctl status opnix-bootstrap.service --no-pager
+sudo ls -l /etc/opnix-token
+```
+
+Expected result:
+- `/etc/opnix-token` exists
+- mode is `600`
+- owner is `root`
+
+### Step 4: Verify token retrieval from setec path
+
+On the target server:
+
+```bash
+sudo tailscale status
+sudo tailscale --host=setec setec get opnix-token | head -c 12 && echo
+```
+
+If that command fails:
+- confirm `tailscale` is connected
+- confirm the relay host name `setec` resolves in your tailnet
+- re-run Step 1 to refresh the stored token
+
+### Step 5: Verify Home Manager wiring for user sessions
+
+Log in as `hbohlen` and check:
+
+```bash
+echo "$OP_SERVICE_ACCOUNT_TOKEN_FILE"
+```
+
+Expected:
+- `/etc/opnix-token`
+
+If empty in the current shell, start a new login shell (or SSH session) so session vars are reloaded.
