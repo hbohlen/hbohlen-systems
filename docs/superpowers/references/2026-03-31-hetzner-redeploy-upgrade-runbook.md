@@ -285,6 +285,11 @@ Use this when:
 - you already ran `tailscale up --authkey=...` manually
 - you now want `/etc/opnix-token` and Home Manager env wiring on that host
 
+Important clarification:
+- this workflow does **not** use an `opnix token set` command
+- opnix reads `OP_SERVICE_ACCOUNT_TOKEN_FILE`, which is set to `/etc/opnix-token` in Home Manager
+- token setup here means creating `/etc/opnix-token` (automatically via `opnix-bootstrap.service`, or manually as a fallback)
+
 ### Step 1: Ensure the relay machine has the current opnix token in setec
 
 On `hbohlen-01` (or any host with `op` signed in and `tailscale setec` access):
@@ -292,6 +297,7 @@ On `hbohlen-01` (or any host with `op` signed in and `tailscale setec` access):
 ```bash
 TOKEN="$(op read op://hbohlen-systems/opnix/token --no-newline)"
 tailscale setec put opnix-token "$TOKEN"
+unset TOKEN
 tailscale setec status
 ```
 
@@ -322,6 +328,15 @@ Expected result:
 - `/etc/opnix-token` exists
 - mode is `600`
 - owner is `root`
+
+Manual fallback (if you need to set token file yourself):
+
+```bash
+TOKEN="$(sudo tailscale --host=setec setec get opnix-token)"
+printf '%s' "$TOKEN" | sudo tee /etc/opnix-token >/dev/null
+unset TOKEN
+sudo chmod 600 /etc/opnix-token
+```
 
 ### Step 4: Verify token retrieval from setec path
 
