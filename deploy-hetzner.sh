@@ -6,13 +6,15 @@ set -Eeuo pipefail
 # ==============================
 LOG_FILE="deploy.log"
 NAME="hbohlen-01"
-TYPE="cx31"
+TYPE="cpx32"
 LOCATION="hel1"
 IMAGE="ubuntu-24.04"
-SSH_KEY_NAME="my-deploy-key"
+SSH_KEY_NAME="hbohlen-key"
 
-FLAKE_TARGET=".#nixosConfigurations.hbohlen-01"
-HOST_HARDWARE_PATH="nix/cells/nixos/hosts/hbohlen-01/hardware-configuration.nix"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+FLAKE_TARGET="${REPO_ROOT}#hbohlen-01"
+FLAKE_EVAL_TARGET="${REPO_ROOT}#nixosConfigurations.hbohlen-01"
+HOST_HARDWARE_PATH="${REPO_ROOT}/nix/cells/nixos/hosts/hbohlen-01/hardware-configuration.nix"
 
 SSH_USER_ROOT="root"
 SSH_USER_ADMIN="hbohlen"
@@ -83,11 +85,11 @@ ensure_requirements() {
 }
 
 ensure_local_files() {
-  [[ -f flake.nix ]] || die "FAIL at STEP 4: flake.nix missing"
-  [[ -f nix/cells/nixos/default.nix ]] || die "FAIL at STEP 4: nix/cells/nixos/default.nix missing"
-  [[ -f nix/cells/nixos/modules/base.nix ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/base.nix missing"
-  [[ -f nix/cells/nixos/modules/disko.nix ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/disko.nix missing"
-  [[ -f nix/cells/nixos/hosts/hbohlen-01/default.nix ]] || die "FAIL at STEP 4: host module missing"
+  [[ -f "${REPO_ROOT}/flake.nix" ]] || die "FAIL at STEP 4: flake.nix missing"
+  [[ -f "${REPO_ROOT}/nix/cells/nixos/default.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/default.nix missing"
+  [[ -f "${REPO_ROOT}/nix/cells/nixos/modules/base.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/base.nix missing"
+  [[ -f "${REPO_ROOT}/nix/cells/nixos/modules/disko.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/disko.nix missing"
+  [[ -f "${REPO_ROOT}/nix/cells/nixos/hosts/hbohlen-01/default.nix" ]] || die "FAIL at STEP 4: host module missing"
   [[ -f "${HOST_HARDWARE_PATH}" ]] || die "FAIL at STEP 4: generated hardware config missing at ${HOST_HARDWARE_PATH}"
 }
 
@@ -124,11 +126,18 @@ main() {
   poll_ssh "${SSH_USER_ROOT}" "${server_ip}" || die "FAIL at STEP 2: root SSH was never reachable"
 
   mkdir -p "$(dirname "${HOST_HARDWARE_PATH}")"
+  rm -f "${HOST_HARDWARE_PATH}"
   clear_known_host "${server_ip}"
   nix run github:nix-community/nixos-anywhere -- \
+    --flake "${FLAKE_TARGET}" \
+    --phases kexec \
+    --no-use-machine-substituters \
     --generate-hardware-config nixos-generate-config "${HOST_HARDWARE_PATH}" \
     --target-host "${SSH_USER_ROOT}@${server_ip}" \
     || die "FAIL at STEP 2: hardware config generation failed"
+
+  [[ -s "${HOST_HARDWARE_PATH}" ]] \
+    || die "FAIL at STEP 2: hardware config file was not written"
 
   step "STEP 3: SSH checks"
   clear_known_host "${server_ip}"
@@ -139,8 +148,10 @@ main() {
   echo "Config checks passed"
 
   step "STEP 5: Validate flake target assumptions"
-  nix eval "${FLAKE_TARGET}.config.system.stateVersion" >/dev/null \
-    || die "FAIL at STEP 5: flake target ${FLAKE_TARGET} does not evaluate"
+  nix eval "${FLAKE_EVAL_TARGET}.config.system.stateVersion" >/dev/null \
+    || die "FAIL at STEP 5: flake eval target ${FLAKE_EVAL_TARGET} does not evaluate"
+  nix eval "${FLAKE_EVAL_TARGET}.config.boot.loader.grub.device" >/dev/null \
+    || die "FAIL at STEP 5: bootloader settings do not evaluate"
   echo "Flake target ${FLAKE_TARGET} evaluates successfully"
 
   step "STEP 6: Install NixOS"

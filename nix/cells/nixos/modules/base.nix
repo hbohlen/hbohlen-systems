@@ -2,11 +2,16 @@
 { pkgs, ... }:
 
 {
-  # Hetzner-compatible EFI GRUB bootloader
+  # Hetzner Cloud can be picky about firmware mode, so install GRUB in a
+  # dual-mode layout: BIOS to the disk itself and EFI to the ESP.
   boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.efiSupport = true;
-  boot.loader.grub.device = "nodev";
+  boot.loader.grub.efiInstallAsRemovable = true;
   boot.loader.efi.canTouchEfiVariables = false;
+
+  # Keep serial console output available for cloud-console debugging.
+  boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty1" ];
 
   # Network
   networking.useDHCP = true;

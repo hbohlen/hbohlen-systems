@@ -11,6 +11,12 @@ in
       content = {
         type = "gpt";
         partitions = {
+          bios = {
+            name = "bios";
+            size = "1M";
+            type = "EF02";
+          };
+
           boot = {
             name = "boot";
             size = "512M";

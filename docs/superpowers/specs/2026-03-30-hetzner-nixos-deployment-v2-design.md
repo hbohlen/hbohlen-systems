@@ -19,7 +19,7 @@ Add exactly one new top-level file:
 - `deploy-hetzner.sh`
 
 Boundary decisions:
-- Re-target `hbohlen-01` to `x86_64-linux` for `cx31`.
+- Re-target `hbohlen-01` to `x86_64-linux` for `cpx32`.
 - Keep `flake-parts` and existing cell layout.
 - Use nixos-anywhere hardware scanning to generate host hardware config file in-repo and import it from host module.
 
@@ -35,15 +35,16 @@ Purpose: one-command deployment orchestrator.
 
 Required behavior:
 1. STEP 1 server create (or replace existing) with:
-   - `TYPE=cx31` (user-approved default)
+   - `TYPE=cpx32`
    - `IMAGE=ubuntu-24.04`
    - `LOCATION=hel1`
-   - pre-injected SSH key name `my-deploy-key`
+   - pre-injected SSH key name `hbohlen-key`
 2. STEP 2 hardware check:
    - SSH polling until reachable
    - `ssh-keygen -R` before SSH and before every nixos-anywhere call
-   - run nixos-anywhere hardware generation:
-     - `--generate-hardware-config nixos-generate-config <repo-host-path>`
+   - run nixos-anywhere hardware generation using an absolute flake path
+   - pass `--no-use-machine-substituters` during hardware generation to avoid depending on `nix.settings.substituters`
+   - fail if the generated hardware file is missing or empty
 3. STEP 3 SSH checks:
    - explicit polling with clear retry logs and timeout failure
 4. STEP 4 config check:
@@ -78,13 +79,18 @@ Operational requirements:
   - `/var`
   - `/tmp`
 - Keep EFI system partition.
+- Add a tiny BIOS boot partition so the same image can boot if Hetzner presents the VM in legacy BIOS mode.
 
 ### E. `nix/cells/nixos/modules/base.nix` and/or host module (minimal edits)
-- Configure Hetzner-compatible EFI GRUB bootloader.
+- Configure GRUB in dual-mode form:
+  - install to `/dev/sda` for BIOS boot
+  - keep `efiSupport = true`
+  - set `efiInstallAsRemovable = true` so EFI boot does not depend on firmware variable writes
 - Keep `networking.useDHCP = true`.
 - Ensure `system.stateVersion` is explicitly set.
 - Remove initial passwords (SSH-key-only policy).
 - Ensure authorized SSH key exists for both `root` and `hbohlen`.
+- Keep serial console kernel params for cloud-console debugging.
 
 ### F. `nix/cells/nixos/hosts/hbohlen-01/default.nix` (minimal edit)
 - Import generated hardware config path.
@@ -132,10 +138,10 @@ Pre-flight checks:
 - hcloud auth/context available.
 
 Functional checks:
-- New server created as `cx31` in `hel1` using `ubuntu-24.04` and `my-deploy-key`.
+- New server created as `cpx32` in `hel1` using `ubuntu-24.04` and `hbohlen-key`.
 - Hardware config generated from real machine via nixos-anywhere.
-- Disk layout uses Btrfs subvolumes as specified.
-- Bootloader, DHCP, stateVersion, and SSH key policy are applied.
+- Disk layout uses Btrfs subvolumes as specified plus BIOS boot partition + EFI partition.
+- Bootloader, DHCP, stateVersion, serial console params, and SSH key policy are applied.
 - Initial passwords removed.
 - Install executed with `--debug --build-on-remote`.
 
