@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "providers": {
+    "openai-codex": {
+      "tokens": {
+        "access_token": "REDACTED",
+        "refresh_token": "REDACTED"
+      },
+      "last_refresh": "2026-03-30T23:14:12.364730Z",
+      "auth_mode": "chatgpt"
+    }
+  },
+  "active_provider": "openai-codex",
+  "updated_at": "2026-03-31T00:11:24.059630+00:00"
+}

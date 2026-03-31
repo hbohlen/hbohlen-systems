@@ -1,0 +1,2 @@
+# Auto-activate devShell when entering project
+use flake
