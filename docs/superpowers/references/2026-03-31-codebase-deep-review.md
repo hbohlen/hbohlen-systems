@@ -17,7 +17,7 @@ Overall, the architecture is clean and compositional. The largest risk area is s
 
 ## 2) Repository Documentation (Structure + Responsibilities)
 
-## Top-level map
+### Top-level map
 
 - `flake.nix`
   - Root orchestrator. Imports cells and defines supported systems.
@@ -40,7 +40,7 @@ Overall, the architecture is clean and compositional. The largest risk area is s
 - `docs/superpowers/`
   - Specs/plans/references for design and operations.
 
-## Flake composition
+### Flake composition
 
 `flake.nix` imports:
 
@@ -53,7 +53,7 @@ And exposes supported systems:
 - `aarch64-linux`
 - `aarch64-darwin`
 
-## NixOS host composition (`hbohlen-01`)
+### NixOS host composition (`hbohlen-01`)
 
 `nix/cells/nixos/default.nix` composes modules in this order:
 
@@ -68,12 +68,12 @@ And exposes supported systems:
 9. `./modules/opnix-bootstrap.nix`
 10. `./hosts/hbohlen-01/default.nix`
 
-## Home Manager composition
+### Home Manager composition
 
 - Standalone HM output exists at `nix/cells/home/default.nix` (`flake.homeConfigurations.hbohlen`).
 - NixOS-integrated HM is also wired directly inside `nix/cells/nixos/default.nix`.
 
-## Deployment workflow script
+### Deployment workflow script
 
 `deploy-hetzner.sh` performs:
 
@@ -204,7 +204,7 @@ graph TD
 
 ## 5) Findings and Improvement Suggestions
 
-## High priority
+### High priority
 
 1. **Remove embedded Tailscale auth key from source**
    - File: `nix/cells/nixos/modules/opnix-bootstrap.nix`
@@ -221,7 +221,7 @@ graph TD
    - Current script writes token directly and then `chmod 600`.
    - Recommendation: write with restrictive permissions from creation (`install -m 600` / temporary file + atomic move), and return non-zero on repeated fetch failure.
 
-## Medium priority
+### Medium priority
 
 4. **Add retry/backoff and explicit failure policy for bootstrap**
    - File: `nix/cells/nixos/modules/opnix-bootstrap.nix`
@@ -237,7 +237,7 @@ graph TD
    - Files: `nix/cells/home/default.nix`, `nix/cells/nixos/default.nix`
    - Both standalone and NixOS-embedded HM exist; this is fine but should be explicitly documented as intentional with usage guidance.
 
-## Low priority
+### Low priority
 
 7. **Add CI gate for flake evaluation/checking**
    - Suggested checks: `nix flake check`, `nix flake show`, and targeted evals used by deployment assumptions.
