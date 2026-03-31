@@ -19,4 +19,9 @@ in
   };
 
   systemd.services.tailscale.wantedBy = [ "multi-user.target" ];
+
+  environment.systemPackages = with pkgs; [
+    tailscale
+    _1password-cli
+  ];
 }
