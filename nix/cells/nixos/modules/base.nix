@@ -2,6 +2,9 @@
 { pkgs, ... }:
 
 {
+  # Allow unfree packages (1password-cli)
+  nixpkgs.config.allowUnfree = true;
+
   # Hetzner Cloud can be picky about firmware mode, so install GRUB in a
   # dual-mode layout: BIOS to the disk itself and EFI to the ESP.
   boot.loader.grub.enable = true;
