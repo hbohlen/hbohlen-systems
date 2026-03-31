@@ -7,6 +7,8 @@
         inputs.disko.nixosModules.disko
         ./modules/disko.nix
         ./modules/base.nix
+        ./modules/ssh-hardening.nix
+        ./modules/tailscale-enhanced.nix
         ./hosts/hbohlen-01/default.nix
       ];
     };
