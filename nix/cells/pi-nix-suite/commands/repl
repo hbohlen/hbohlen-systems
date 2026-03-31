@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# /repl - Open a REPL in a split pane
+# Usage: /repl <type>
+#
+# Types:
+#   nix    - Nix REPL (nix repl .#)
+#   python - Python REPL (with venv detection)
+#   node   - Node.js REPL
+#
+# Example:
+#   /repl nix
+#   /repl python
+
+set -e
+
+TYPE="$1"
+
+if [[ -z "$TYPE" ]]; then
+    echo "Usage: /repl <nix|python|node>"
+    exit 1
+fi
+
+case "$TYPE" in
+    nix)
+        CMD="nix repl .#"
+        ;;
+    python)
+        # Detect virtual environment
+        if [[ -n "$VIRTUAL_ENV" ]]; then
+            CMD="$VIRTUAL_ENV/bin/python"
+        elif [[ -f "./venv/bin/python" ]]; then
+            CMD="./venv/bin/python"
+        elif [[ -f "./.venv/bin/python" ]]; then
+            CMD="./.venv/bin/python"
+        else
+            CMD="python3"
+        fi
+        ;;
+    node)
+        CMD="node"
+        ;;
+    *)
+        echo "Unknown REPL type: $TYPE"
+        echo "Available types: nix, python, node"
+        exit 1
+        ;;
+esac
+
+# Split window horizontally and run REPL
+tmux split-window -h -c "$PWD" "$CMD"
+echo "$TYPE REPL opened in new pane"
+echo "Use Ctrl+B arrow keys to navigate between panes"

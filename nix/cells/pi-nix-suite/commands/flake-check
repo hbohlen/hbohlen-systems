@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# /flake-check - Run nix flake check and capture errors
+# Usage: /flake-check [path]
+#
+# Runs nix flake check, captures any errors, and provides
+# helpful context for debugging.
+#
+# Example:
+#   /flake-check
+#   /flake-check ./my-flake
+
+set -e
+
+FLAKE_PATH="${1:-.}"
+
+echo "Running nix flake check on $FLAKE_PATH..."
+echo ""
+
+# Run check and capture output
+if nix flake check "$FLAKE_PATH" 2>&1; then
+    echo "✓ Flake check passed!"
+else
+    echo "✗ Flake check failed"
+    echo ""
+    echo "Common fixes:"
+    echo "  - Check for syntax errors in .nix files"
+    echo "  - Verify all referenced files exist"
+    echo "  - Ensure git tracks all flake files"
+    echo "  - Run 'nix repl' to test expressions"
+fi
