@@ -4,9 +4,15 @@
     let
       # Import llm-agents packages
       llm-agents-packages = inputs.llm-agents.packages.${system};
-      
+
       # Import pi-nix-suite
       pi-nix-suite = pkgs.callPackage ../pi-nix-suite/default.nix { inherit pkgs; };
+
+      # Import fish config from Nix expression
+      fishModule = import ./config/fish.nix {
+        inherit pkgs;
+        starshipConfig = ./config/starship.toml;
+      };
     in
     {
       devShells.default = pkgs.mkShell {
@@ -55,14 +61,9 @@
           echo "Entering hbohlen-systems devShell..."
           export SHELL=${pkgs.fish}/bin/fish
 
-          # Set starship config
-          export STARSHIP_CONFIG=${./config/starship.toml}
+          # Setup fish config from Nix store
+          ${fishModule.shellHook}
 
-          # Set fish config directory for this shell
-          export XDG_CONFIG_HOME="$PWD/.nix-devshell-config"
-          mkdir -p "$XDG_CONFIG_HOME/fish"
-          cp ${./config/config.fish} "$XDG_CONFIG_HOME/fish/config.fish"
-          
           # Setup pi-nix-suite
           if [[ -d "${pi-nix-suite}/share" ]]; then
             export PI_NIX_SUITE_DIR="${pi-nix-suite}/share"
@@ -73,10 +74,7 @@
             fi
           fi
 
-          # Start fish if not already in fish and running interactively
-          if [[ -z "$FISH_VERSION" && -t 0 ]]; then
-            exec ${pkgs.fish}/bin/fish
-          fi
+          echo "Tip: Use 'nix develop --command fish' to enter fish shell directly"
         '';
       };
     };
