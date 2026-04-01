@@ -17,6 +17,7 @@
           home-manager.users.hbohlen = import ../home/programs/opnix-ssh.nix;
         }
         ./modules/opnix-bootstrap.nix
+        ./modules/caddy-tailscale.nix
         ./hosts/hbohlen-01/default.nix
       ];
     };
