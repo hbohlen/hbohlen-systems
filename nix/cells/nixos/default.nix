@@ -3,6 +3,7 @@
   flake.nixosConfigurations = {
     hbohlen-01 = inputs.nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
       modules = [
         inputs.home-manager.nixosModules.default
         inputs.disko.nixosModules.disko
@@ -10,7 +11,6 @@
         ./modules/disko.nix
         ./modules/base.nix
         ./modules/ssh-hardening.nix
-        ./modules/tailscale-enhanced.nix
         ./modules/fail2ban.nix
         {
           home-manager.useGlobalPkgs = true;

@@ -27,7 +27,6 @@ in
     secrets = {
       caddyTailscaleEnv = {
         reference = "op://hbohlen-systems/tailscale/authKey";
-        format = "dotenv";
         owner = config.services.caddy.user;
         mode = "0600";
         services = [ "caddy" ];
