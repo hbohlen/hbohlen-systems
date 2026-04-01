@@ -6,12 +6,15 @@
       homeManagerModule = inputs.home-manager.nixosModules.home-manager;
       opnixModule = inputs.opnix.nixosModules.default;
 
-      minimalEvalConfig = {
+      minimalSystemConfig = {
         fileSystems."/" = {
           device = "/dev/sda1";
           fsType = "ext4";
         };
         boot.loader.grub.devices = [ "/dev/sda" ];
+      };
+
+      minimalEvalConfig = minimalSystemConfig // {
         services.caddy.tailscaleEnable = true;
       };
     in
@@ -63,6 +66,22 @@
             ];
           in
           result.config.disko.devices.disk.main.device == "/dev/sda";
+        expected = true;
+      };
+
+      nix-unit.tests.testGnoEvaluates = {
+        expr =
+          let
+            result = pkgs.nixos [
+              ../../modules/gno.nix
+              {
+                services.gno-daemon.enable = true;
+                services.gno-serve.enable = true;
+              }
+              minimalSystemConfig
+            ];
+          in
+          result.config.system.build.toplevel != null;
         expected = true;
       };
     };
