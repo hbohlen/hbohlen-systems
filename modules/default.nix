@@ -15,7 +15,13 @@
       hostFiles = if hasHosts then
         let
           entries = builtins.readDir hostDir;
-          hostNames = builtins.attrNames entries;
+          hostNames = builtins.filter
+            (name:
+              entries.${name} == "regular"
+              && lib.hasSuffix ".nix" name
+              && !(lib.hasSuffix "-hardware-configuration.nix" name)
+            )
+            (builtins.attrNames entries);
         in
         builtins.map (f: hostDir + "/${f}") hostNames
       else
