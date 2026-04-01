@@ -18,6 +18,7 @@
         }
         ./modules/opnix-bootstrap.nix
         ./modules/caddy-tailscale.nix
+        ./modules/opencode.nix
         ./hosts/hbohlen-01/default.nix
       ];
     };
