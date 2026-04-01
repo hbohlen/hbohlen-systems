@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    nix-unit = {
+      url = "github:nix-community/nix-unit";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,8 +32,8 @@
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
       imports = [
-        ./nix/cells/devshells
-        ./nix/cells/nixos
+        inputs.nix-unit.modules.flake.default
+        ./modules
       ];
     };
 }
