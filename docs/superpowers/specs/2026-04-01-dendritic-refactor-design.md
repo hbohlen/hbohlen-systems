@@ -27,7 +27,6 @@ The current structure has:
 hbohlen-systems/
 ├── flake.nix                          # Root: inputs + nix-unit + module loading
 ├── modules/
-│   ├── systems.nix                    # Supported systems list
 │   ├── base.nix                       # nixpkgs config, stateVersion, locale, nix settings
 │   ├── user.nix                       # hbohlen user (nixos + homeManager in one file)
 │   ├── ssh.nix                        # SSH server + client config
@@ -138,17 +137,6 @@ Minimal root file. Declares inputs, loads flake-parts, imports modules and nix-u
         ./modules
       ];
     };
-}
-```
-
-### modules/systems.nix
-
-Declares supported systems. Extracted from current `flake.nix`.
-
-```nix
-{ lib, ... }:
-{
-  flake.systems = lib.mkDefault [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 }
 ```
 
@@ -314,7 +302,7 @@ Work on `feature/dendritic-refactor` branch. Build incrementally.
 
 ### Order
 
-1. **Foundation** — `flake.nix` + `modules/systems.nix` + `modules/base.nix`
+1. **Foundation** — `flake.nix` + `modules/base.nix`
 2. **DevShell** — `modules/devshell.nix` (verify devShell still works)
 3. **User + Auth** — `modules/user.nix` + `modules/ssh.nix`
 4. **Networking** — `modules/tailscale.nix` + `modules/caddy.nix` + `modules/security.nix`
