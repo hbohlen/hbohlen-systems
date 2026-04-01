@@ -27,7 +27,7 @@ in
     secrets = {
       caddyTailscaleEnv = {
         reference = "op://hbohlen-systems/tailscale/authKey";
-        format = "dotenv";
+        # format removed - was causing evaluation error
         owner = config.services.caddy.user;
         mode = "0600";
         services = [ "caddy" ];

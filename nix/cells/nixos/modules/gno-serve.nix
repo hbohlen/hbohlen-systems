@@ -1,6 +1,7 @@
 # GNU General Public License v3.0
 # GNO Web UI - NixOS Module
 # Provides systemd service for running gno serve and tailscale serve
+
 { config, lib, pkgs, ... }:
 
 let
@@ -35,7 +36,7 @@ in
         Environment = [
           "HOME=/home/hbohlen"
         ];
-        ExecStart = "${lib.getExe pkgs.gno} serve --port ${toString cfg.port} --hostname 127.0.0.1";
+        ExecStart = "${lib.getExe pkgs.nix} run github:numtide/llm-agents.nix#gno -- serve --port ${toString cfg.port} --hostname 127.0.0.1";
         # Only listen on localhost
         PrivateTmp = true;
         NoNewPrivileges = true;

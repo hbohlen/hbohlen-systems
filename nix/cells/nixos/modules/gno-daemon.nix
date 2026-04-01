@@ -1,6 +1,7 @@
 # GNU General Public License v3.0
 # GNO Knowledge Engine - NixOS Module
 # Provides systemd service for running gno daemon
+
 { config, lib, pkgs, ... }:
 
 let
@@ -47,7 +48,7 @@ in
         Environment = [
           "HOME=${cfg.homeDir}"
         ];
-        ExecStart = "${lib.getExe pkgs.gno} daemon";
+        ExecStart = "${lib.getExe pkgs.nix} run github:numtide/llm-agents.nix#gno -- daemon";
         WorkingDirectory = cfg.homeDir;
         # Security hardening
         PrivateTmp = true;
@@ -57,8 +58,5 @@ in
         ReadWritePaths = [ cfg.collectionPath ];
       };
     };
-
-    # Add gno to system packages for CLI access
-    environment.systemPackages = [ pkgs.gno ];
   };
 }
