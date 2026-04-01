@@ -34,6 +34,14 @@
       imports = [
         inputs.nix-unit.modules.flake.default
         ./modules
+        ./tests/unit
       ];
+
+      perSystem = { ... }: {
+        nix-unit.inputs = {
+          inherit (inputs) nixpkgs flake-parts nix-unit llm-agents;
+        };
+        nix-unit.allowNetwork = true;
+      };
     };
 }
