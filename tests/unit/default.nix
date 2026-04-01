@@ -1,9 +1,8 @@
-{ lib, ... }:
+{ ... }:
 
 {
-  imports = lib.attrValues (
-    builtins.mapAttrs
-      (name: value: ./${name})
-      (builtins.removeAttrs (builtins.readDir ./.) [ "default.nix" ])
-  );
+  imports = [
+    ./test-options.nix
+    ./test-outputs.nix
+  ];
 }
