@@ -21,4 +21,13 @@ in
     "virtio_blk"
     "virtio_scsi"
   ];
+
+  # Enable opencode web UI
+  services.opencode = {
+    enable = true;
+    port = 8080;
+  };
+
+  # Enable Caddy with Tailscale integration
+  services.caddy.tailscaleEnable = true;
 }
