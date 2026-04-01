@@ -20,6 +20,20 @@ in
 
   systemd.services.tailscale.wantedBy = [ "multi-user.target" ];
 
+  services.onepassword-secrets = {
+    enable = true;
+    tokenFile = "/etc/opnix-token";
+
+    secrets = {
+      caddyTailscaleEnv = {
+        reference = "op://hbohlen-systems/tailscale/caddy-authKey";
+        owner = config.services.caddy.user;
+        mode = "0600";
+        services = [ "caddy" ];
+      };
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     tailscale
     _1password-cli

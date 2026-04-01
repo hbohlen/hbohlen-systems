@@ -15,11 +15,12 @@ in
   };
 
   config = lib.mkIf config.services.caddy.tailscaleEnable {
-    services.caddy = {
-      enable = true;
-      package = pkgs.caddy.withPlugins {
-        plugins = [ tailscalePlugin ];
-      };
+      services.caddy = {
+        enable = true;
+        environmentFile = "/var/lib/opnix/secrets/caddyTailscaleEnv";
+        package = pkgs.caddy.withPlugins {
+          plugins = [ tailscalePlugin ];
+        };
 
       virtualHosts = {
         "${config.services.caddy.opencodeHost}" = {

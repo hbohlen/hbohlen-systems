@@ -6,6 +6,7 @@
       modules = [
         inputs.home-manager.nixosModules.default
         inputs.disko.nixosModules.disko
+        inputs.opnix.nixosModules.default
         ./modules/disko.nix
         ./modules/base.nix
         ./modules/ssh-hardening.nix
