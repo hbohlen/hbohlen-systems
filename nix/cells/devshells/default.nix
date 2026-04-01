@@ -31,6 +31,7 @@
           # Editor & dev tools
           neovim
           git
+          gh
 
           # AI/Agents
           llm-agents-packages.pi
