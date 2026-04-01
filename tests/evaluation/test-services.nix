@@ -84,5 +84,23 @@
           result.config.system.build.toplevel != null;
         expected = true;
       };
+
+      nix-unit.tests.testOpencodeEvaluates = {
+        expr =
+          let
+            result = pkgs.nixos [
+              ../../modules/opencode.nix
+              {
+                services.opencode.enable = true;
+              }
+              {
+                _module.args.inputs = inputs;
+              }
+              minimalSystemConfig
+            ];
+          in
+          result.config.system.build.toplevel != null;
+        expected = true;
+      };
     };
 }
