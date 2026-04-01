@@ -11,7 +11,6 @@
         ./modules/disko.nix
         ./modules/base.nix
         ./modules/ssh-hardening.nix
-        ./modules/tailscale-enhanced.nix
         ./modules/fail2ban.nix
         {
           home-manager.useGlobalPkgs = true;
