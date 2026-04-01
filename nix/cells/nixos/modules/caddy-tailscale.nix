@@ -17,7 +17,7 @@ in
   config = lib.mkIf config.services.caddy.tailscaleEnable {
       services.caddy = {
         enable = true;
-        environmentFile = "/var/lib/opnix/secrets/caddyTailscaleEnv";
+        environmentFile = "/var/lib/opnix/secrets/caddyTailscaleAuthKey";
         package = pkgs.caddy.withPlugins {
           plugins = [ tailscalePlugin ];
         };
@@ -26,7 +26,7 @@ in
         "${config.services.caddy.opencodeHost}" = {
           extraConfig = ''
             bind tailscale/opencode
-            reverse_proxy 127.0.0.1:8080
+            reverse_proxy 127.0.0.1:8081
           '';
         };
       };

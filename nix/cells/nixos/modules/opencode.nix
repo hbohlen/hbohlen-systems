@@ -8,7 +8,7 @@ in
     enable = lib.mkEnableOption "opencode web UI";
     port = lib.mkOption {
       type = lib.types.port;
-      default = 8080;
+      default = 8081;
       description = "Port for opencode web UI";
     };
   };
