@@ -34,6 +34,14 @@
 
           # AI/Agents
           llm-agents-packages.pi
+          llm-agents-packages.omp
+          llm-agents-packages.cli-proxy-api
+          llm-agents-packages.qwen-code
+          llm-agents-packages.codex
+          llm-agents-packages.hermes-agent
+          llm-agents-packages.ccusage-opencode
+          llm-agents-packages.ccusage-pi
+          llm-agents-packages.rtk
           pi-nix-suite
 
           # LSPs & formatters
