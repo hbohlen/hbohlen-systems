@@ -1,10 +1,12 @@
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   daemonCfg = config.services.gno-daemon;
   serveCfg = config.services.gno-serve;
-in
-{
+in {
   options.services.gno-daemon = {
     enable = lib.mkEnableOption "GNO knowledge engine daemon";
     user = lib.mkOption {
@@ -42,9 +44,9 @@ in
     # GNO daemon
     systemd.services.gno-daemon = lib.mkIf daemonCfg.enable {
       description = "GNO knowledge engine daemon";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "tailscaled.service" ];
-      wants = [ "network-online.target" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target" "tailscaled.service"];
+      wants = ["network-online.target"];
       serviceConfig = {
         Type = "simple";
         User = daemonCfg.user;
@@ -61,16 +63,16 @@ in
         NoNewPrivileges = true;
         ProtectSystem = "strict";
         ProtectHome = true;
-        ReadWritePaths = [ daemonCfg.collectionPath ];
+        ReadWritePaths = [daemonCfg.collectionPath];
       };
     };
 
     # GNO serve service
     systemd.services.gno-serve = lib.mkIf serveCfg.enable {
       description = "GNO web UI server";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "tailscaled.service" "gno-daemon.service" ];
-      wants = [ "network-online.target" "tailscaled.service" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target" "tailscaled.service" "gno-daemon.service"];
+      wants = ["network-online.target" "tailscaled.service"];
       serviceConfig = {
         Type = "simple";
         Restart = "on-failure";
@@ -89,9 +91,9 @@ in
     # Tailscale serve configuration
     systemd.services.tailscale-serve-gno = lib.mkIf serveCfg.enable {
       description = "Configure Tailscale serve for GNO";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "tailscaled.service" "gno-serve.service" ];
-      wants = [ "gno-serve.service" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target" "tailscaled.service" "gno-serve.service"];
+      wants = ["gno-serve.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;

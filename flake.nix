@@ -27,21 +27,45 @@
     };
   };
 
-  outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin"];
 
       imports = [
         inputs.nix-unit.modules.flake.default
         ./modules
         ./tests/unit
+        ./tests/evaluation
       ];
 
-      perSystem = { ... }: {
+      perSystem = {pkgs, ...}: {
         nix-unit.inputs = {
           inherit (inputs) nixpkgs flake-parts nix-unit llm-agents;
         };
         nix-unit.allowNetwork = true;
+
+        checks = {
+          formatting = pkgs.runCommand "alejandra-check" {} ''
+            ${pkgs.alejandra}/bin/alejandra -c \
+              ${./flake.nix} \
+              ${./modules} \
+              ${./tests}
+            touch $out
+          '';
+
+          statix = pkgs.runCommand "statix-check" {} ''
+            ${pkgs.statix}/bin/statix check ${./flake.nix}
+            touch $out
+          '';
+
+          deadnix = pkgs.runCommand "deadnix-check" {} ''
+            ${pkgs.deadnix}/bin/deadnix \
+              ${./flake.nix} \
+              ${./modules} \
+              ${./tests}
+            touch $out
+          '';
+        };
       };
     };
 }

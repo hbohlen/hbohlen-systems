@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   nixpkgs.config.allowUnfree = true;
 
   boot.loader.grub.enable = true;
@@ -9,7 +7,7 @@
   boot.loader.grub.efiInstallAsRemovable = true;
   boot.loader.efi.canTouchEfiVariables = false;
 
-  boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty1" ];
+  boot.kernelParams = ["console=ttyS0,115200n8" "console=tty1"];
 
   networking.useDHCP = true;
   networking.firewall.enable = true;
@@ -24,7 +22,7 @@
     fish
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   system.stateVersion = "24.11";
 }

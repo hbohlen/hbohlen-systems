@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   # NixOS: OpenSSH server with hardening
   services.openssh = {
     enable = true;
@@ -30,15 +33,18 @@
     };
 
     listenAddresses = [
-      { addr = "0.0.0.0"; port = 22; }
+      {
+        addr = "0.0.0.0";
+        port = 22;
+      }
     ];
   };
 
   # Firewall: allow SSH on Tailscale interface
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 22 ];
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22];
 
   # Home Manager: SSH client config
-  home-manager.users.hbohlen = { pkgs, ... }: {
+  home-manager.users.hbohlen = {pkgs, ...}: {
     programs.ssh = {
       enable = true;
       extraConfig = ''

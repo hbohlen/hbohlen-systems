@@ -1,16 +1,13 @@
-{ lib, ... }:
-
-let
+{lib, ...}: let
   deployKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICP6MnCIoDGFnx42wAmVgoNxaHxEtRnOF10d3q/xOIZG hbohlen@hetzner";
-in
-{
+in {
   imports = lib.optionals (builtins.pathExists ./hbohlen-01-hardware-configuration.nix) [
     ./hbohlen-01-hardware-configuration.nix
   ];
 
   networking.hostName = "hbohlen-01";
 
-  users.users.root.openssh.authorizedKeys.keys = [ deployKey ];
+  users.users.root.openssh.authorizedKeys.keys = [deployKey];
 
   networking.usePredictableInterfaceNames = true;
   boot.initrd.availableKernelModules = [

@@ -1,10 +1,13 @@
-{ config, pkgs, inputs, ... }:
-
 {
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
   # NixOS: user creation
   users.users.hbohlen = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = ["wheel"];
     shell = pkgs.fish;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICP6MnCIoDGFnx42wAmVgoNxaHxEtRnOF10d3q/xOIZG hbohlen@hetzner"
@@ -19,7 +22,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.hbohlen = { pkgs, ... }: {
+    users.hbohlen = {pkgs, ...}: {
       home.stateVersion = "24.11";
 
       programs.ssh = {

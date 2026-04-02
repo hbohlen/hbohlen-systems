@@ -1,9 +1,6 @@
-{ ... }:
-
-let
+{...}: let
   diskDevice = "/dev/sda";
-in
-{
+in {
   disko.devices = {
     disk.main = {
       device = diskDevice;
@@ -39,7 +36,7 @@ in
                 };
                 nix = {
                   mountpoint = "/nix";
-                  mountOptions = [ "compress=zstd" "noatime" ];
+                  mountOptions = ["compress=zstd" "noatime"];
                 };
                 home = {
                   mountpoint = "/home";

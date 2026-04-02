@@ -1,9 +1,11 @@
-{ config, pkgs, lib, ... }:
-
-let
-  tailscaleTags = "tag:server,tag:prod";
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  tailscaleTags = "tag:server,tag:prod";
+in {
   services.tailscale = {
     enable = true;
     openFirewall = true;
@@ -15,7 +17,7 @@ in
     ];
   };
 
-  systemd.services.tailscale.wantedBy = [ "multi-user.target" ];
+  systemd.services.tailscale.wantedBy = ["multi-user.target"];
 
   services.onepassword-secrets = {
     enable = true;
@@ -26,7 +28,7 @@ in
         reference = "op://hbohlen-systems/tailscale/authKey";
         owner = config.services.caddy.user;
         mode = "0600";
-        services = [ "caddy" ];
+        services = ["caddy"];
       };
     };
   };

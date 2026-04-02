@@ -1,9 +1,11 @@
-{ pkgs, lib, config, ... }:
-
-let
-  tailscalePlugin = "github.com/tailscale/caddy-tailscale@v0.0.0-20250207163903-69a970c84556";
-in
 {
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  tailscalePlugin = "github.com/tailscale/caddy-tailscale@v0.0.0-20250207163903-69a970c84556";
+in {
   options = with lib.types; {
     services.caddy.tailscaleEnable = lib.mkEnableOption "Enable caddy tailscale integration";
     services.caddy.opencodeHost = lib.mkOption {
@@ -18,7 +20,7 @@ in
       enable = true;
       environmentFile = "/var/lib/opnix/secrets/caddyTailscaleAuthKey";
       package = pkgs.caddy.withPlugins {
-        plugins = [ tailscalePlugin ];
+        plugins = [tailscalePlugin];
       };
 
       virtualHosts = {
