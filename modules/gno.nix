@@ -80,7 +80,7 @@ in {
         Environment = [
           "HOME=/home/hbohlen"
         ];
-        ExecStart = "${lib.getExe pkgs.nix} run github:numtide/llm-agents.nix#gno -- serve --port ${toString serveCfg.port} --hostname 127.0.0.1";
+        ExecStart = "${lib.getExe pkgs.nix} run github:numtide/llm-agents.nix#gno -- serve --port ${toString serveCfg.port}";
         PrivateTmp = true;
         NoNewPrivileges = true;
         ProtectSystem = "strict";

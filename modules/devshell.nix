@@ -9,8 +9,6 @@
   }: let
     llm-agents-packages = inputs.llm-agents.packages.${system};
 
-    pi-nix-suite = pkgs.callPackage ../nix/cells/pi-nix-suite/default.nix {inherit pkgs;};
-
     fishConfig = pkgs.writeTextFile {
       name = "devshell-fish-config";
       text = ''
@@ -135,7 +133,7 @@
         llm-agents-packages.ccusage-opencode
         llm-agents-packages.ccusage-pi
         llm-agents-packages.rtk
-        pi-nix-suite
+        llm-agents-packages.opencode
         nil
         lua-language-server
         stylua
@@ -150,14 +148,6 @@
         export XDG_CONFIG_HOME="$PWD/.nix-devshell-config"
         mkdir -p "$XDG_CONFIG_HOME/fish"
         cp ${fishConfig} "$XDG_CONFIG_HOME/fish/config.fish"
-
-        if [[ -d "${pi-nix-suite}/share" ]]; then
-          export PI_NIX_SUITE_DIR="${pi-nix-suite}/share"
-          if [[ ! -L "$HOME/.pi/agent/commands/subagent" ]]; then
-            echo "Setting up pi-nix-suite commands..."
-            ${pi-nix-suite}/bin/pi-nix-suite-setup 2>/dev/null || true
-          fi
-        fi
 
         echo "Tip: Use 'nix develop --command fish' to enter fish shell directly"
       '';

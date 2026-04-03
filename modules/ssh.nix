@@ -42,14 +42,4 @@
 
   # Firewall: allow SSH on Tailscale interface
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [22];
-
-  # Home Manager: SSH client config
-  home-manager.users.hbohlen = {pkgs, ...}: {
-    programs.ssh = {
-      enable = true;
-      extraConfig = ''
-        IdentityAgent ~/.ssh/agent.sock
-      '';
-    };
-  };
 }

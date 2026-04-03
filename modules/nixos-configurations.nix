@@ -9,6 +9,7 @@
       ./base.nix
       ./disko.nix
       ./user.nix
+      ./home.nix
       ./ssh.nix
       ./tailscale.nix
       ./security.nix
