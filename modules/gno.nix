@@ -35,8 +35,8 @@ in {
     };
     hostname = lib.mkOption {
       type = lib.types.str;
-      default = "gno.hbohlen.systems.ts.net";
-      description = "Tailscale Magic DNS hostname";
+      default = "gno.${config.services.caddy.tailnetSuffix}";
+      description = "Hostname for Caddy virtualHost";
     };
   };
 
@@ -50,7 +50,6 @@ in {
       serviceConfig = {
         Type = "simple";
         User = daemonCfg.user;
-        Group = daemonCfg.user;
         Restart = "on-failure";
         RestartSec = "5s";
         TimeoutStartSec = "30s";
@@ -61,9 +60,12 @@ in {
         WorkingDirectory = daemonCfg.homeDir;
         PrivateTmp = true;
         NoNewPrivileges = true;
-        ProtectSystem = "strict";
-        ProtectHome = true;
-        ReadWritePaths = [daemonCfg.collectionPath];
+        ReadWritePaths = [
+          daemonCfg.collectionPath
+          "/nix"
+          "${daemonCfg.homeDir}/.cache"
+          "${daemonCfg.homeDir}/.local"
+        ];
       };
     };
 
@@ -83,22 +85,16 @@ in {
         ExecStart = "${lib.getExe pkgs.nix} run github:numtide/llm-agents.nix#gno -- serve --port ${toString serveCfg.port}";
         PrivateTmp = true;
         NoNewPrivileges = true;
-        ProtectSystem = "strict";
-        ProtectHome = true;
       };
     };
 
-    # Tailscale serve configuration
-    systemd.services.tailscale-serve-gno = lib.mkIf serveCfg.enable {
-      description = "Configure Tailscale serve for GNO";
-      wantedBy = ["multi-user.target"];
-      after = ["network-online.target" "tailscaled.service" "gno-serve.service"];
-      wants = ["gno-serve.service"];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${lib.getExe pkgs.tailscale} serve --bg ${toString serveCfg.port}";
-        ExecStop = "${lib.getExe pkgs.tailscale} serve reset";
+    # Caddy virtualHost for GNO
+    services.caddy.virtualHosts = lib.mkIf serveCfg.enable {
+      "${serveCfg.hostname}" = {
+        extraConfig = ''
+          bind tailscale/gno
+          reverse_proxy 127.0.0.1:${toString serveCfg.port}
+        '';
       };
     };
 

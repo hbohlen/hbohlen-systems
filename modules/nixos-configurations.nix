@@ -10,6 +10,7 @@
       ./disko.nix
       ./user.nix
       ./home.nix
+      ./tmux.nix
       ./ssh.nix
       ./tailscale.nix
       ./security.nix
