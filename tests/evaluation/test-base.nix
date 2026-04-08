@@ -38,5 +38,16 @@
         homeConfig.home.username == "hbohlen";
       expected = true;
     };
+
+    nix-unit.tests.testHomeModuleImportedConfigsCompose = {
+      expr = let
+        result = pkgs.nixos [../../nixos/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
+        homeConfig = lib.attrsets.attrByPath ["home-manager" "users" "hbohlen"] null result.config;
+      in
+        homeConfig.programs.tmux.enable
+        && homeConfig.programs.ssh.enable
+        && homeConfig.home.sessionVariables.OP_SERVICE_ACCOUNT_TOKEN_FILE == "/etc/opnix-token";
+      expected = true;
+    };
   };
 }
