@@ -117,7 +117,7 @@
           }
         ];
       in
-        result.config.services.caddy.opencodeHost == "opencode.hbohlen.systems";
+        result.config.services.caddy.opencodeHost == "opencode.taile0585b.ts.net";
       expected = true;
     };
   };
