@@ -34,6 +34,7 @@
       imports = [
         inputs.nix-unit.modules.flake.default
         ./modules
+        ./parts
         ./tests/unit
         ./tests/evaluation
       ];
