@@ -6,10 +6,13 @@
       inputs.home-manager.nixosModules.default
       inputs.disko.nixosModules.disko
       inputs.opnix.nixosModules.default
+      {
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+      }
       {imports = import ../nixos;}
       ../modules/user.nix
-      ../modules/home.nix
-      ../modules/tmux.nix
+      ../home
       ../hosts/hbohlen-01.nix
     ];
   };

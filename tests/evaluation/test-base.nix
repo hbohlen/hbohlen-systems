@@ -29,5 +29,13 @@
         result.config.users.users.hbohlen.isNormalUser;
       expected = true;
     };
+
+    nix-unit.tests.testHomeModuleComposes = {
+      expr = let
+        result = pkgs.nixos [../../modules/user.nix ../../home minimalEvalConfig homeManagerModule];
+      in
+        result.config.home-manager.users.hbohlen.home.username == "hbohlen";
+      expected = true;
+    };
   };
 }

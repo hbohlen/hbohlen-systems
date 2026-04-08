@@ -17,24 +17,4 @@
   programs.fish.enable = true;
 
   security.sudo.wheelNeedsPassword = false;
-
-  # Home Manager: user-level config
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    users.hbohlen = {pkgs, ...}: {
-      home.stateVersion = "24.11";
-
-      programs.ssh = {
-        enable = true;
-        extraConfig = ''
-          IdentityAgent ~/.ssh/agent.sock
-        '';
-      };
-
-      home.sessionVariables = {
-        OP_SERVICE_ACCOUNT_TOKEN_FILE = "/etc/opnix-token";
-      };
-    };
-  };
 }
