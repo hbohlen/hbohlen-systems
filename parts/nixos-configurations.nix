@@ -11,7 +11,6 @@
         home-manager.useUserPackages = true;
       }
       {imports = import ../nixos;}
-      ../modules/user.nix
       ../home
       ../hosts/hbohlen-01.nix
     ];

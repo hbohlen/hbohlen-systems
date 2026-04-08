@@ -19,7 +19,7 @@
       expr = let
         result = pkgs.nixos [
           ../../nixos/base.nix
-          ../../modules/user.nix
+          ../../nixos/user.nix
           ../../nixos/ssh.nix
           ../../nixos/tailscale.nix
           minimalEvalConfig

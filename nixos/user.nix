@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  inputs,
-  ...
-}: {
+{pkgs, ...}: {
   # NixOS: user creation
   users.users.hbohlen = {
     isNormalUser = true;

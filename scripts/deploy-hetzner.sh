@@ -14,7 +14,7 @@ SSH_KEY_NAME="hbohlen-key"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 FLAKE_TARGET="${REPO_ROOT}#hbohlen-01"
 FLAKE_EVAL_TARGET="${REPO_ROOT}#nixosConfigurations.hbohlen-01"
-HOST_HARDWARE_PATH="${REPO_ROOT}/nix/cells/nixos/hosts/hbohlen-01/hardware-configuration.nix"
+HOST_HARDWARE_PATH="${REPO_ROOT}/hosts/hbohlen-01-hardware-configuration.nix"
 
 SSH_USER_ROOT="root"
 SSH_USER_ADMIN="hbohlen"
@@ -86,10 +86,10 @@ ensure_requirements() {
 
 ensure_local_files() {
   [[ -f "${REPO_ROOT}/flake.nix" ]] || die "FAIL at STEP 4: flake.nix missing"
-  [[ -f "${REPO_ROOT}/nix/cells/nixos/default.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/default.nix missing"
-  [[ -f "${REPO_ROOT}/nix/cells/nixos/modules/base.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/base.nix missing"
-  [[ -f "${REPO_ROOT}/nix/cells/nixos/modules/disko.nix" ]] || die "FAIL at STEP 4: nix/cells/nixos/modules/disko.nix missing"
-  [[ -f "${REPO_ROOT}/nix/cells/nixos/hosts/hbohlen-01/default.nix" ]] || die "FAIL at STEP 4: host module missing"
+  [[ -f "${REPO_ROOT}/nixos/default.nix" ]] || die "FAIL at STEP 4: nixos/default.nix missing"
+  [[ -f "${REPO_ROOT}/nixos/base.nix" ]] || die "FAIL at STEP 4: nixos/base.nix missing"
+  [[ -f "${REPO_ROOT}/nixos/disko.nix" ]] || die "FAIL at STEP 4: nixos/disko.nix missing"
+  [[ -f "${REPO_ROOT}/hosts/hbohlen-01.nix" ]] || die "FAIL at STEP 4: host module missing"
   [[ -f "${HOST_HARDWARE_PATH}" ]] || die "FAIL at STEP 4: generated hardware config missing at ${HOST_HARDWARE_PATH}"
 }
 

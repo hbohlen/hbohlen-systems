@@ -1,5 +1,6 @@
 [
   ./base.nix
+  ./user.nix
   ./ssh.nix
   ./security.nix
   ./caddy.nix

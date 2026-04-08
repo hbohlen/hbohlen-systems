@@ -48,7 +48,10 @@
           formatting = pkgs.runCommand "alejandra-check" {} ''
             ${pkgs.alejandra}/bin/alejandra -c \
               ${./flake.nix} \
-              ${./modules} \
+              ${./parts} \
+              ${./hosts} \
+              ${./nixos} \
+              ${./home} \
               ${./tests}
             touch $out
           '';
@@ -61,7 +64,10 @@
           deadnix = pkgs.runCommand "deadnix-check" {} ''
             ${pkgs.deadnix}/bin/deadnix \
               ${./flake.nix} \
-              ${./modules} \
+              ${./parts} \
+              ${./hosts} \
+              ${./nixos} \
+              ${./home} \
               ${./tests}
             touch $out
           '';

@@ -24,7 +24,7 @@
 
     nix-unit.tests.testUserEvaluates = {
       expr = let
-        result = pkgs.nixos [../../nixos/base.nix ../../modules/user.nix minimalEvalConfig homeManagerModule];
+        result = pkgs.nixos [../../nixos/base.nix ../../nixos/user.nix minimalEvalConfig homeManagerModule];
       in
         result.config.users.users.hbohlen.isNormalUser;
       expected = true;
@@ -32,7 +32,7 @@
 
     nix-unit.tests.testHomeModuleComposes = {
       expr = let
-        result = pkgs.nixos [../../modules/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
+        result = pkgs.nixos [../../nixos/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
       in
         result.config.home-manager.users.hbohlen.home.username == "hbohlen";
       expected = true;
