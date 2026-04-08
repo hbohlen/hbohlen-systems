@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ../modules/devshell.nix
-    ../modules/nixos-configurations.nix
+    ./devshell.nix
+    ./nixos-configurations.nix
   ];
 }

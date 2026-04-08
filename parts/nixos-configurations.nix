@@ -6,18 +6,11 @@
       inputs.home-manager.nixosModules.default
       inputs.disko.nixosModules.disko
       inputs.opnix.nixosModules.default
-      ./base.nix
-      ./disko.nix
-      ./user.nix
-      ./home.nix
-      ./tmux.nix
-      ./ssh.nix
-      ./tailscale.nix
-      ./security.nix
-      ./caddy.nix
-      ./opencode.nix
-      ./gno.nix
-      ./hosts/hbohlen-01.nix
+      {imports = import ../nixos;}
+      ../modules/user.nix
+      ../modules/home.nix
+      ../modules/tmux.nix
+      ../hosts/hbohlen-01.nix
     ];
   };
 }
