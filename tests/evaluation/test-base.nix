@@ -33,8 +33,9 @@
     nix-unit.tests.testHomeModuleComposes = {
       expr = let
         result = pkgs.nixos [../../nixos/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
+        homeConfig = lib.attrsets.attrByPath ["home-manager" "users" "hbohlen"] null result.config;
       in
-        result.config.home-manager.users.hbohlen.home.username == "hbohlen";
+        homeConfig.home.username == "hbohlen";
       expected = true;
     };
   };
