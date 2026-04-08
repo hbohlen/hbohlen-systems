@@ -16,7 +16,7 @@
   in {
     nix-unit.tests.testBaseEvaluates = {
       expr = let
-        result = pkgs.nixos [../../modules/base.nix minimalEvalConfig];
+        result = pkgs.nixos [../../nixos/base.nix minimalEvalConfig];
       in
         result.config.networking.hostName != null;
       expected = true;
@@ -24,7 +24,7 @@
 
     nix-unit.tests.testUserEvaluates = {
       expr = let
-        result = pkgs.nixos [../../modules/base.nix ../../modules/user.nix minimalEvalConfig homeManagerModule];
+        result = pkgs.nixos [../../nixos/base.nix ../../modules/user.nix minimalEvalConfig homeManagerModule];
       in
         result.config.users.users.hbohlen.isNormalUser;
       expected = true;

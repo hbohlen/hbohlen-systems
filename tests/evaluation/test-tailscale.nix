@@ -18,10 +18,10 @@
     nix-unit.tests.testTailscaleEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/base.nix
+          ../../nixos/base.nix
           ../../modules/user.nix
-          ../../modules/ssh.nix
-          ../../modules/tailscale.nix
+          ../../nixos/ssh.nix
+          ../../nixos/tailscale.nix
           minimalEvalConfig
           homeManagerModule
           opnixModule

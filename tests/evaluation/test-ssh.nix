@@ -17,9 +17,9 @@
     nix-unit.tests.testSshEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/base.nix
+          ../../nixos/base.nix
           ../../modules/user.nix
-          ../../modules/ssh.nix
+          ../../nixos/ssh.nix
           minimalEvalConfig
           homeManagerModule
         ];

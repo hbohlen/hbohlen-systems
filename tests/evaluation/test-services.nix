@@ -24,11 +24,11 @@
     nix-unit.tests.testCaddyEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/base.nix
+          ../../nixos/base.nix
           ../../modules/user.nix
-          ../../modules/ssh.nix
-          ../../modules/tailscale.nix
-          ../../modules/caddy.nix
+          ../../nixos/ssh.nix
+          ../../nixos/tailscale.nix
+          ../../nixos/caddy.nix
           minimalEvalConfig
           homeManagerModule
           opnixModule
@@ -41,12 +41,12 @@
     nix-unit.tests.testSecurityEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/base.nix
+          ../../nixos/base.nix
           ../../modules/user.nix
-          ../../modules/ssh.nix
-          ../../modules/tailscale.nix
-          ../../modules/caddy.nix
-          ../../modules/security.nix
+          ../../nixos/ssh.nix
+          ../../nixos/tailscale.nix
+          ../../nixos/caddy.nix
+          ../../nixos/security.nix
           minimalEvalConfig
           homeManagerModule
           opnixModule
@@ -61,7 +61,7 @@
         diskoModule = inputs.disko.nixosModules.disko;
         result = pkgs.nixos [
           diskoModule
-          ../../modules/disko.nix
+          ../../nixos/disko.nix
         ];
       in
         result.config.disko.devices.disk.main.device == "/dev/sda";
@@ -71,7 +71,7 @@
     nix-unit.tests.testGnoEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/gno.nix
+          ../../nixos/gno.nix
           {
             services.gno-daemon.enable = true;
             services.gno-serve.enable = true;
@@ -86,7 +86,7 @@
     nix-unit.tests.testOpencodeEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/opencode.nix
+          ../../nixos/opencode.nix
           {
             services.opencode.enable = true;
           }

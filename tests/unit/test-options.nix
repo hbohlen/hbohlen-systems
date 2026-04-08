@@ -3,7 +3,7 @@
     nix-unit.tests.testOpencodeEnableOptionDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/opencode.nix
+          ../../nixos/opencode.nix
           {
             _module.args.inputs = inputs;
             fileSystems."/" = {
@@ -21,7 +21,7 @@
     nix-unit.tests.testOpencodePortDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/opencode.nix
+          ../../nixos/opencode.nix
           {
             _module.args.inputs = inputs;
             fileSystems."/" = {
@@ -39,7 +39,7 @@
     nix-unit.tests.testGnoDaemonEnableOptionDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/gno.nix
+          ../../nixos/gno.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -56,7 +56,7 @@
     nix-unit.tests.testGnoServeEnableOptionDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/gno.nix
+          ../../nixos/gno.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -73,7 +73,7 @@
     nix-unit.tests.testGnoServePortDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/gno.nix
+          ../../nixos/gno.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -90,7 +90,7 @@
     nix-unit.tests.testCaddyTailscaleEnableOptionDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/caddy.nix
+          ../../nixos/caddy.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -107,7 +107,7 @@
     nix-unit.tests.testCaddyOpencodeHostDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../modules/caddy.nix
+          ../../nixos/caddy.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";

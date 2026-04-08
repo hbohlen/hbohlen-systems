@@ -1,10 +1,10 @@
 [
-  ../modules/base.nix
-  ../modules/ssh.nix
-  ../modules/security.nix
-  ../modules/caddy.nix
-  ../modules/tailscale.nix
-  ../modules/disko.nix
-  ../modules/gno.nix
-  ../modules/opencode.nix
+  ./base.nix
+  ./ssh.nix
+  ./security.nix
+  ./caddy.nix
+  ./tailscale.nix
+  ./disko.nix
+  ./gno.nix
+  ./opencode.nix
 ]
