@@ -1,0 +1,12 @@
+## Archive Complete (with warnings)
+
+**Change:** agents-skills-consolidation
+**Schema:** spec-driven
+**Archived to:** openspec/changes/archive/2026-04-08-agents-skills-consolidation/
+**Specs:** No delta specs
+
+**Warnings:**
+- Archived with 3 incomplete tasks (validation and deferred items)
+- Archived with 1 deferred task group (1.6 pi discovery pattern)
+
+Review the archive if this was not intentional.

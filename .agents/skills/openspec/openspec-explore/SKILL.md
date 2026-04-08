@@ -1,6 +1,8 @@
 ---
 name: openspec-explore
 description: Enter explore mode - a thinking partner for exploring ideas, investigating problems, and clarifying requirements. Use when the user wants to think through something before or during a change.
+tags: [openspec, workflow, exploration]
+category: openspec
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -201,7 +203,7 @@ You: [reads codebase]
 
 **User is stuck mid-implementation:**
 ```
-User: /opsx:explore add-auth-system
+User: /opsx-explore add-auth-system
       The OAuth integration is more complex than expected
 
 You: [reads change artifacts]
