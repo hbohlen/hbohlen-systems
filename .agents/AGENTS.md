@@ -32,6 +32,7 @@
 | `openspec` | `.agents/skills/openspec/` | OpenSpec workflow (propose, explore, apply, archive) |
 | `beads` | `.agents/skills/beads/` | Beads issue tracker workflow |
 | `personal` | `.agents/skills/personal/` | Personal workflow and productivity |
+| `diagrams` | `.agents/skills/diagrams/` | Mermaid diagram authoring for architecture and workflows |
 
 ---
 
