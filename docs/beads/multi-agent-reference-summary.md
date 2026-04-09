@@ -826,7 +826,7 @@ bd export --file beads-backup-$(date +%Y%m%d).jsonl
 ### Project Integration
 - **Beads in Nix flake**: `llm-agents-packages.beads` (v0.63.3)
 - **DevShell integration**: `parts/devshell.nix` and `home/default.nix`
-- **Kiro spec integration**: Mapping between `.kiro/specs/` workflow and beads issue lifecycle
+- **Spec workflow integration**: Mapping between `.agents/specs/` workflow and beads issue lifecycle
 
 ## Conclusion
 

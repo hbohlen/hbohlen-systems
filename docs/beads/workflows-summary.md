@@ -881,7 +881,7 @@ bd sync  # Critical: sync before ending
 - **Beads in devShell**: `nix develop .#ai --command bd --help`
 - **Existing research**: `.kilo/worktrees/fluoridated-meteorology/.kilo/plans/*.md`
 - **Core CLI Summary**: `docs/beads/core-cli-summary.md`
-- **Kiro spec-driven development**: `.kiro/specs/` workflow integration
+- **Spec-driven development**: `.agents/specs/` workflow integration
 - **AGENTS.md**: Project AI workflow guidelines
 
 ### Key Concepts Recap
