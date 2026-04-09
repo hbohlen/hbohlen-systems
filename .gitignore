@@ -16,3 +16,10 @@ node_modules/
 
 # Deployment artifacts
 deploy.log
+
+.vscode/
+node_modules/
+
+package.json
+
+package-lock.json
