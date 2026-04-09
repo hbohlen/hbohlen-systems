@@ -423,7 +423,7 @@ bd sync
 - Existing research: `.kilo/worktrees/fluoridated-meteorology/.kilo/plans/*.md`
 - Beads in devShell: `nix develop .#ai --command bd --help`
 - AGENTS.md: Project AI workflow guidelines
-- Kiro specs: `.kiro/specs/` for spec-driven development
+- Spec workflow: `.agents/specs/` for spec-driven development
 
 ### Key Takeaways for AI Agents
 1. **Always use `--json`** for programmatic access
