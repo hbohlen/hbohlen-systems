@@ -1,0 +1,20 @@
+# Spec: Add Beads Issue Tracker
+
+## Context
+Integrate the `bead` issue tracker from the `numtide/llm-agents.nix` flake into the NixOS configuration.
+
+## Requirements
+- Use the flake input `llm-agents` from `github:numtide/llm-agents.nix#bead`.
+- Ensure the beads issue tracker is enabled and configured.
+- Integrate the configuration into the existing NixOS modules (likely under `nixos/` or `home/`).
+
+## Implementation Plan
+1. **Update Flake Input**: Ensure `flake.nix` points to the correct branch/commit `#bead` for the `llm-agents` input.
+2. **Create Module**: Create a new NixOS or Home Manager module (e.g., `nixos/beads.nix`) that imports the bead functionality from the `llm-agents` flake.
+3. **Enable Beads**: Add the appropriate configuration options to activate the issue tracker.
+4. **Import Module**: Add the new module to the global configuration in `nixos/default.nix` or a specific host configuration.
+
+## Verification
+- Run `nix flake update` to ensure the new input is fetched.
+- Perform a dry-run rebuild: `sudo nixos-rebuild dry-activate`.
+- Verify that the beads binary/service is available in the environment.

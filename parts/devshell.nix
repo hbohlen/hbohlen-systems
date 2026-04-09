@@ -290,11 +290,13 @@
         neovim
         git
         gh
+        dolt
         nil
         lua-language-server
         stylua
         ast-grep
         tmux
+        llm-agents-packages.beads
       ];
 
       shellHook = ''
@@ -324,6 +326,7 @@
         llm-agents-packages.rtk
         llm-agents-packages.opencode
         llm-agents-packages.openspec
+        dolt
         tmux
         agent-menu
       ];
