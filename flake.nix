@@ -52,12 +52,22 @@
               ${./hosts} \
               ${./nixos} \
               ${./home} \
-              ${./tests}
+              ${./tests} \
+              ${./lib} \
+              ${./scripts}
             touch $out
           '';
 
           statix = pkgs.runCommand "statix-check" {} ''
-            ${pkgs.statix}/bin/statix check ${./flake.nix}
+            ${pkgs.statix}/bin/statix check \
+              ${./flake.nix} \
+              ${./parts} \
+              ${./hosts} \
+              ${./nixos} \
+              ${./home} \
+              ${./tests} \
+              ${./lib} \
+              ${./scripts}
             touch $out
           '';
 
@@ -68,7 +78,9 @@
               ${./hosts} \
               ${./nixos} \
               ${./home} \
-              ${./tests}
+              ${./tests} \
+              ${./lib} \
+              ${./scripts}
             touch $out
           '';
         };

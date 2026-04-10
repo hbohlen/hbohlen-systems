@@ -170,20 +170,20 @@ else
     print_error "NixOS label filtering issue"
 fi
 
-# Test 15: Kiro spec integration test
-print_info "Test 15: Testing Kiro spec integration..."
-KIRO_EPIC_ID=$(run_bd_json create "Kiro spec: Test feature" -t epic \
-    --description "Test Kiro spec workflow" \
-    --label "kiro-spec" | jq -r '.id')
+# Test 15: Spec integration test
+print_info "Test 15: Testing Spec integration..."
+KIRO_EPIC_ID=$(run_bd_json create "Spec: Test feature" -t epic \
+    --description "Test Spec workflow" \
+    --label "spec" | jq -r '.id')
 
 KIRO_TASK_ID=$(run_bd_json create "Kiro task: Requirements" --parent "$KIRO_EPIC_ID" \
-    -t task --label "kiro-requirements" | jq -r '.id')
+    -t task --label "spec-requirements" | jq -r '.id')
 
-KIRO_CHECK=$(run_bd_json list --label-any "kiro-spec" | jq -r '.[0].id')
+KIRO_CHECK=$(run_bd_json list --label-any "spec" | jq -r '.[0].id')
 if [[ "$KIRO_CHECK" == "$KIRO_EPIC_ID" ]]; then
-    print_success "Kiro spec integration works correctly"
+    print_success "Spec integration works correctly"
 else
-    print_error "Kiro spec integration issue"
+    print_error "Spec integration issue"
 fi
 
 # Summary
@@ -202,7 +202,7 @@ print_info "  - Dependency management (blocks, parent-child)"
 print_info "  - Ready work queue"
 print_info "  - Sync functionality"
 print_info "  - NixOS-specific patterns"
-print_info "  - Kiro spec integration"
+print_info "  - Spec integration"
 print_info "========================================"
 
 # Optional: keep test directory for inspection

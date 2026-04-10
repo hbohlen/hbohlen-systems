@@ -575,7 +575,7 @@ The project uses tmux worktrees for agent isolation. Beads integrates seamlessly
 - **Cross-worktree coordination**: Use multi-agent routing and pinning
 
 #### Integration with Kiro Spec-Driven Development
-Map Kiro spec workflow to beads issue lifecycle:
+Map Spec workflow to beads issue lifecycle:
 - **Spec creation** → `bd create` with type "spec"
 - **Task generation** → `bd create` with type "task"
 - **Implementation** → `bd update --claim`
@@ -840,4 +840,4 @@ Key advantages for the hbohlen-systems project:
 5. **Dependency tracking** for complex NixOS module relationships
 6. **Formulas and molecules** for reusable workflow patterns
 
-The integration with Kiro spec-driven development provides a powerful combination for structured AI-assisted development on NixOS systems.
+The integration with Spec-driven development provides a powerful combination for structured AI-assisted development on NixOS systems.

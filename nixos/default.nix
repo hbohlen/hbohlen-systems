@@ -3,9 +3,7 @@
   ./user.nix
   ./ssh.nix
   ./security.nix
-  ./caddy.nix
   ./tailscale.nix
   ./disko.nix
-  ./gno.nix
   ./opencode.nix
 ]

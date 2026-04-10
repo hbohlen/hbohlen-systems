@@ -32,7 +32,13 @@
 
     nix-unit.tests.testHomeModuleComposes = {
       expr = let
-        result = pkgs.nixos [../../nixos/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
+        result = pkgs.nixos [
+          ../../nixos/user.nix
+          ../../home/default.nix
+          minimalEvalConfig
+          homeManagerModule
+          { _module.args.inputs = inputs; }
+        ];
         homeConfig = lib.attrsets.attrByPath ["home-manager" "users" "hbohlen"] null result.config;
       in
         homeConfig.home.username == "hbohlen";
@@ -41,7 +47,13 @@
 
     nix-unit.tests.testHomeModuleImportedConfigsCompose = {
       expr = let
-        result = pkgs.nixos [../../nixos/user.nix ../../home/default.nix minimalEvalConfig homeManagerModule];
+        result = pkgs.nixos [
+          ../../nixos/user.nix
+          ../../home/default.nix
+          minimalEvalConfig
+          homeManagerModule
+          { _module.args.inputs = inputs; }
+        ];
         homeConfig = lib.attrsets.attrByPath ["home-manager" "users" "hbohlen"] null result.config;
       in
         homeConfig.programs.tmux.enable

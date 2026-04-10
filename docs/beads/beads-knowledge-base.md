@@ -8,7 +8,7 @@
 - **Beads is already installed** in the devShell: accessible via `nix develop .#ai --command bd --help`
 - **Version**: v0.63.3 via `llm-agents.nix` flake input
 - **Existing research**: `.kilo/worktrees/fluoridated-meteorology/.kilo/plans/*.md`
-- **Integration**: Part of the AI-DLC and Kiro spec-driven development workflow
+- **Integration**: Part of the AI-DLC and Spec-driven development workflow
 
 ### Why Beads for AI Workflows?
 - **Hash-based IDs** (e.g., `bd-a1b2`) prevent collisions when multiple agents work concurrently
@@ -349,18 +349,18 @@ bd create "Found SQL injection vulnerability" -t bug -p 0 \
 ```
 Kiro Phase           → Beads Command
 ─────────────────────────────────────────────
-Spec creation        → bd create "Feature: X" -t epic --label "kiro-spec"
+Spec creation        → bd create "Feature: X" -t epic --label "spec"
 Requirements         → bd create "Requirements" -t task --parent <epic>
 Design               → bd create "Design" -t task --parent <epic>
 Task generation      → bd create "Implement Y" -t task --parent <epic>
 Implementation       → bd update <task> --claim --json
 Validation           → bd create "Validate" -t task --parent <epic>
-Completion           → bd close <task> --reason "Kiro spec implemented"
+Completion           → bd close <task> --reason "Spec implemented"
 ```
 
 **Label conventions for Kiro:**
-- `kiro-spec`, `kiro-requirements`, `kiro-design`, `kiro-tasks`, `kiro-implementation`
-- `kiro-validation`, `kiro-phase1`, `kiro-phase2`, `kiro-phase3`
+- `spec`, `spec-requirements`, `spec-design`, `spec-tasks`, `spec-implementation`
+- `spec-validation`, `spec-phase1`, `spec-phase2`, `spec-phase3`
 
 ### Project-Specific Workflow Examples
 
@@ -376,7 +376,7 @@ bd pour flake-update --var input="nixpkgs" --var target="unstable"
 
 **Run Kiro Spec Workflow:**
 ```bash
-bd pour kiro-spec --var feature="new-feature" --var phase="requirements"
+bd pour spec --var feature="new-feature" --var phase="requirements"
 ```
 
 ## 8. Skill Domains Definition
@@ -388,7 +388,7 @@ bd pour kiro-spec --var feature="new-feature" --var phase="requirements"
 - `bd create`, `bd list`, `bd show`, `bd update`, `bd close`, `bd search`
 
 **Integration Points**:
-- Kiro spec creation and task generation
+- Spec creation and task generation
 - NixOS module issue tracking
 - Daily agent workflow initiation
 
@@ -422,7 +422,7 @@ bd pour kiro-spec --var feature="new-feature" --var phase="requirements"
 
 **Project Integration**:
 - NixOS module creation workflows
-- Kiro spec execution workflows
+- Spec execution workflows
 - Multi-phase project coordination
 
 ### Skill 5: Multi-agent Coordination
@@ -462,7 +462,7 @@ Beads provides a comprehensive, AI-native issue tracking system that integrates 
 2. **Always run `bd sync`** at end of work session (data preservation)
 3. **Start with `bd ready`** to find unblocked work
 4. **Track discoveries** with `--deps discovered-from:<parent>`
-5. **Use formulas** for repetitive project workflows (NixOS modules, Kiro specs)
+5. **Use formulas** for repetitive project workflows (NixOS modules, Specs)
 
 ### Comparison: Beads vs Linear for hbohlen-systems
 | Aspect | Beads | Linear |

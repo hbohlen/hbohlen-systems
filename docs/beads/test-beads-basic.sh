@@ -145,15 +145,15 @@ else
     exit 1
 fi
 
-# Test 9: Kiro spec pattern
-print_info "Test 9: Testing Kiro spec pattern..."
-run_bd create "Kiro spec: Test feature" -t epic \
-    --description "Test Kiro spec workflow" \
-    --label "kiro-spec"
+# Test 9: Spec pattern
+print_info "Test 9: Testing Spec pattern..."
+run_bd create "Spec: Test feature" -t epic \
+    --description "Test Spec workflow" \
+    --label "spec"
 if [[ $? -eq 0 ]]; then
-    print_success "Created Kiro spec issue"
+    print_success "Created Spec issue"
 else
-    print_error "Failed to create Kiro spec issue"
+    print_error "Failed to create Spec issue"
     exit 1
 fi
 
@@ -174,7 +174,7 @@ print_success "All basic tests passed!"
 print_info "Tested:"
 print_info "  - init, create, list, show, update, close, sync"
 print_info "  - NixOS label pattern"
-print_info "  - Kiro spec pattern"
+print_info "  - Spec pattern"
 print_info "  - ready work check"
 print_info ""
 print_info "Test directory: $TEST_DIR"

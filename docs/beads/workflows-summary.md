@@ -597,8 +597,8 @@ bd wisp cleanup --completed  # Clean up when done
 
 **Pattern 4: Kiro Spec Integration**
 ```bash
-# Map Kiro spec phases to beads workflow
-bd pour kiro-spec-workflow --var feature=authentication
+# Map Spec phases to beads workflow
+bd pour spec-workflow --var feature=authentication
 
 # Spec creation → bd create with type "spec"
 # Task generation → bd create with type "task"
@@ -708,10 +708,10 @@ needs = ["test-build"]
 | Validation | Formula step: "validation" |
 | Completion | `bd close` |
 
-**Formula: `kiro-spec-workflow`**
+**Formula: `spec-workflow`**
 ```toml
-formula = "kiro-spec-workflow"
-description = "Kiro-style spec-driven development workflow"
+formula = "spec-workflow"
+description = "Spec-style spec-driven development workflow"
 
 [vars.feature]
 description = "Feature name"
@@ -849,7 +849,7 @@ bd prime  # Load beads context
 # During session
 bd ready  # Find unblocked work
 bd update bd-xyz --claim  # Claim work
-# ... implement NixOS module, Kiro spec, etc.
+# ... implement NixOS module, Spec, etc.
 bd close bd-xyz --reason "Implemented"  # Complete
 
 # Check progress
@@ -900,7 +900,7 @@ Beads workflows provide a powerful, AI-friendly framework for structured task ex
 2. **Coordinate complex processes** with async gates and dependencies
 3. **Track progress** through persistent molecules with git sync
 4. **Execute ephemeral operations** without polluting git history
-5. **Integrate with existing workflows** (NixOS modules, Kiro specs)
+5. **Integrate with existing workflows** (NixOS modules, Specs)
 
 The chemistry metaphor (proto→mol→wisp) provides intuitive phase control, while deep Git integration ensures workflow state is properly versioned and synchronized across sessions.
 

@@ -359,13 +359,13 @@ llm-agents-packages.beads
 ### Kiro Spec-Driven Development Integration
 
 **Mapping Kiro workflow to beads:**
-1. **Spec creation** → `bd create "Feature: X" -t epic --description "Kiro spec" --label "kiro-spec"`
-2. **Task generation** → `bd create "Implement Y" -t task --parent bd-epic --label "kiro-task"`
+1. **Spec creation** → `bd create "Feature: X" -t epic --description "Spec" --label "spec"`
+2. **Task generation** → `bd create "Implement Y" -t task --parent bd-epic --label "spec-task"`
 3. **Implementation** → `bd update bd-task --claim --json`
-4. **Completion** → `bd close bd-task --reason "Kiro spec implemented"`
+4. **Completion** → `bd close bd-task --reason "Spec implemented"`
 
 **Suggested label conventions for Kiro:**
-- `kiro-spec`, `kiro-task`, `kiro-validation`, `kiro-phase1`, `kiro-phase2`
+- `spec`, `spec-task`, `spec-validation`, `spec-phase1`, `spec-phase2`
 - Dependency type: `discovered-from` for tasks discovered during spec analysis
 
 ### Project Workflow Integration

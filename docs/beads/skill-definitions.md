@@ -7,7 +7,7 @@ This document defines six skill domains for using beads (`bd`) within the hbohle
 ### Project Context
 - **Beads Version**: v0.63.3 via `llm-agents.nix` flake input
 - **Access**: Available via `nix develop .#ai --command bd --help`
-- **Integration**: Part of AI-DLC and Kiro spec-driven development workflow
+- **Integration**: Part of AI-DLC and Spec-driven development workflow
 - **Storage**: Database committed to git (user preference)
 
 ### Key Principles for AI Agents
@@ -15,7 +15,7 @@ This document defines six skill domains for using beads (`bd`) within the hbohle
 2. **Always run `bd sync`** at end of work session (critical for data preservation)
 3. **Start with `bd ready`** to find unblocked work before starting
 4. **Track discoveries** with `--deps discovered-from:<parent>` when finding new work
-5. **Use formulas** for repetitive project workflows (NixOS modules, Kiro specs)
+5. **Use formulas** for repetitive project workflows (NixOS modules, Specs)
 
 ---
 
@@ -35,7 +35,7 @@ bd create "Implement NixOS module for service X" \
 
 # List and filter issues
 bd list --status open --priority "0,1,2" --type "task,feature" --json
-bd list --label-any "nixos,kiro-spec" --json
+bd list --label-any "nixos,spec" --json
 bd search "authentication" --status open --json
 
 # View issue details
@@ -83,11 +83,11 @@ bd close $ISSUE_ID --reason "Implemented with tests, documented in README" --jso
 
 **Kiro Spec Integration:**
 ```bash
-# Kiro spec creation → beads epic
+# Spec creation → beads epic
 bd create "Feature: Multi-agent coordination system" \
   -t epic -p 1 \
-  --description "Kiro spec for multi-agent coordination using beads routing" \
-  --label "kiro-spec,multi-agent" \
+  --description "Spec for multi-agent coordination using beads routing" \
+  --label "spec,multi-agent" \
   --json
 
 # Kiro task generation → beads subtasks
@@ -95,7 +95,7 @@ bd create "Design routing configuration format" \
   --parent bd-epic-id \
   -t task -p 2 \
   --description "Design TOML/JSON format for .beads/routes.jsonl" \
-  --label "kiro-design" \
+  --label "spec-design" \
   --json
 ```
 
@@ -200,7 +200,7 @@ bd create "Found race condition in auth cache" \
 
 **Kiro Spec Dependency Chain:**
 ```bash
-# Kiro spec phases as dependencies
+# Spec phases as dependencies
 REQUIREMENTS_ID=$(bd create "Requirements analysis" --parent $EPIC_ID --json | jq -r '.id')
 DESIGN_ID=$(bd create "System design" --parent $EPIC_ID --json | jq -r '.id')
 IMPLEMENTATION_ID=$(bd create "Implementation" --parent $EPIC_ID --json | jq -r '.id')
@@ -341,11 +341,11 @@ bd import -i ci-results.jsonl --orphan-handling allow
 
 **Kiro Spec Data Management:**
 ```bash
-# Export Kiro spec issues for review
-bd export --label kiro-spec -o kiro-spec-review.jsonl
+# Export Spec issues for review
+bd export --label spec -o spec-review.jsonl
 
 # Import updated spec
-bd import -i updated-kiro-spec.jsonl --orphan-handling strict
+bd import -i updated-spec.jsonl --orphan-handling strict
 ```
 
 ### Potential Pitfalls and Troubleshooting
@@ -378,7 +378,7 @@ Use formulas, molecules, gates, and wisps for complex, repeatable workflows. Thi
 ```bash
 # Formula management
 bd pour nixos-module --var name="tailscale" --var description="VPN mesh" --json
-bd pour --dry-run kiro-spec --var feature="auth" --json  # Preview
+bd pour --dry-run spec --var feature="auth" --json  # Preview
 
 # Molecule management
 bd mol list --json
@@ -480,8 +480,8 @@ bd pour nixos-module \
 
 **Kiro Spec Execution Workflow:**
 ```bash
-# Kiro spec as formula
-bd pour kiro-spec \
+# Spec as formula
+bd pour spec \
   --var feature="multi-agent-routing" \
   --var phase="implementation" \
   --json
@@ -783,8 +783,8 @@ bd query 'updated_at < date("now", "-7 days") AND status = "open"' --json
 # Find issues with specific dependency patterns
 bd query 'EXISTS (SELECT 1 FROM dependencies WHERE type = "blocks")' --json
 
-# Complex Kiro spec queries
-bd query 'labels @> ["kiro-spec"] AND created_at > date("now", "-30 days")' --json
+# Complex Spec queries
+bd query 'labels @> ["spec"] AND created_at > date("now", "-30 days")' --json
 ```
 
 ### Integration with Project Workflows
@@ -867,7 +867,7 @@ Configuration & Advanced
 - [ ] Git hooks installed: `bd hooks install`
 - [ ] Configuration committed: `.beads/config.toml` in git
 - [ ] NixOS patterns configured in routes
-- [ ] Kiro spec labels defined
+- [ ] Spec labels defined
 - [ ] Agent coordination setup complete
 
 ### Troubleshooting Matrix
@@ -880,4 +880,4 @@ Configuration & Advanced
 | Slow performance | Large database | Run `bd vacuum --json` |
 
 ---
-*Skill definitions for beads v0.63.3 in hbohlen-systems NixOS configuration repository. These skills enable AI agents to effectively use beads for issue tracking, dependency management, and workflow orchestration within the project's AI-DLC and Kiro spec-driven development workflow.*
+*Skill definitions for beads v0.63.3 in hbohlen-systems NixOS configuration repository. These skills enable AI agents to effectively use beads for issue tracking, dependency management, and workflow orchestration within the project's AI-DLC and Spec-driven development workflow.*

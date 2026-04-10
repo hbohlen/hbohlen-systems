@@ -50,17 +50,6 @@ bd sync                  # ALWAYS run at session end
 
 ---
 
-## Legacy / adapter areas (non-canonical)
-
-| Path | Status | Notes |
-|------|--------|-------|
-| `.opencode/commands/` | adapter | thin wrappers over `.agents/skills/spec/` |
-| `.pi/prompts/` | adapter | opsx prompts only |
-| `.hermes/skills/` | adapter | hermes-specific, not canonical |
-| `.kiro/` | **removed** | migrated to `.agents/` — see `docs/reports/spec-workflow-migration.md` |
-
----
-
 ## Session completion (mandatory)
 
 1. File issues for remaining work (`bd create ...`)
