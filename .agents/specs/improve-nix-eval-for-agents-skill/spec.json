@@ -1,0 +1,22 @@
+{
+  "feature_name": "improve-nix-eval-for-agents-skill",
+  "created_at": "2026-04-09T22:27:34Z",
+  "updated_at": "2026-04-09T23:45:00Z",
+  "language": "en",
+  "phase": "complete",
+  "approvals": {
+    "requirements": {
+      "generated": false,
+      "approved": false
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "ready_for_implementation": true
+}
