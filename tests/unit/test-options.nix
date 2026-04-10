@@ -36,10 +36,10 @@
       expected = true;
     };
 
-    nix-unit.tests.testGnoDaemonEnableOptionDefault = {
+    nix-unit.tests.testPiWebUiEnableOptionDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../nixos/gno.nix
+          ../../nixos/pi-web-ui.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -49,14 +49,14 @@
           }
         ];
       in
-        result.config.services.gno-daemon.enable == false;
+        result.config.services.pi-web-ui.enable == false;
       expected = true;
     };
 
-    nix-unit.tests.testGnoServeEnableOptionDefault = {
+    nix-unit.tests.testPiWebUiPortDefault = {
       expr = let
         result = pkgs.nixos [
-          ../../nixos/gno.nix
+          ../../nixos/pi-web-ui.nix
           {
             fileSystems."/" = {
               device = "/dev/sda1";
@@ -66,24 +66,7 @@
           }
         ];
       in
-        result.config.services.gno-serve.enable == false;
-      expected = true;
-    };
-
-    nix-unit.tests.testGnoServePortDefault = {
-      expr = let
-        result = pkgs.nixos [
-          ../../nixos/gno.nix
-          {
-            fileSystems."/" = {
-              device = "/dev/sda1";
-              fsType = "ext4";
-            };
-            boot.loader.grub.devices = ["/dev/sda"];
-          }
-        ];
-      in
-        result.config.services.gno-serve.port == 8082;
+        result.config.services.pi-web-ui.port == 3000;
       expected = true;
     };
 
@@ -118,6 +101,23 @@
         ];
       in
         result.config.services.caddy.opencodeHost == "opencode.taile0585b.ts.net";
+      expected = true;
+    };
+
+    nix-unit.tests.testCaddyPiWebUiHostDefault = {
+      expr = let
+        result = pkgs.nixos [
+          ../../nixos/caddy.nix
+          {
+            fileSystems."/" = {
+              device = "/dev/sda1";
+              fsType = "ext4";
+            };
+            boot.loader.grub.devices = ["/dev/sda"];
+          }
+        ];
+      in
+        result.config.services.caddy.piWebUiHost == "pi-web-ui.taile0585b.ts.net";
       expected = true;
     };
   };

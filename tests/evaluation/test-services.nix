@@ -68,13 +68,12 @@
       expected = true;
     };
 
-    nix-unit.tests.testGnoEvaluates = {
+    nix-unit.tests.testPiWebUiEvaluates = {
       expr = let
         result = pkgs.nixos [
-          ../../nixos/gno.nix
+          ../../nixos/pi-web-ui.nix
           {
-            services.gno-daemon.enable = true;
-            services.gno-serve.enable = true;
+            services.pi-web-ui.enable = true;
           }
           minimalSystemConfig
         ];

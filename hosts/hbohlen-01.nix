@@ -18,14 +18,17 @@ in {
   ];
 
   services.opencode.enable = true;
-
-  services.gno-daemon = {
+  
+  services.pi-web-ui = {
     enable = true;
+    port = 3000;
     user = "hbohlen";
-    collectionPath = "/home/hbohlen/mnemosyne";
+    authFilePath = "/home/hbohlen/.pi/agent/auth.json";
   };
 
-  services.gno-serve.enable = true;
-
-  services.caddy.tailscaleEnable = true;
+  services.caddy = {
+    tailscaleEnable = true;
+    enablePiWebUi = true;
+    piWebUiHost = "mnemosyne.hbohlen.systems";
+  };
 }

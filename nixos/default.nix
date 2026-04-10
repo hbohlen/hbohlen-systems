@@ -6,4 +6,6 @@
   ./tailscale.nix
   ./disko.nix
   ./opencode.nix
+  ./caddy.nix
+  ./pi-web-ui.nix
 ]
