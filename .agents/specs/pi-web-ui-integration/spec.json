@@ -1,13 +1,13 @@
 {
   "feature_name": "pi-web-ui-integration",
   "created_at": "2026-04-10T01:22:47Z",
-  "updated_at": "2026-04-10T01:22:47Z",
+  "updated_at": "2026-04-10T01:33:05Z",
   "language": "en",
-  "phase": "requirements-generated",
+  "phase": "requirements",
   "approvals": {
     "requirements": {
       "generated": true,
-      "approved": false
+      "approved": true
     },
     "design": {
       "generated": false,

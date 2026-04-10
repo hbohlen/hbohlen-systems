@@ -148,6 +148,20 @@ A web-based chat interface for interacting with authenticated LLM models via the
 
 ---
 
+## Research Validation ✅
+
+All 3 critical research items completed. Key findings:
+
+1. **Provider Mapping** — No translation layer needed. GitHub Copilot (and all providers) use native pi-ai identifiers.
+2. **Token Refresh** — pi-ai's `getOAuthApiKey()` handles refresh automatically. We save updated credentials after each call.
+3. **Streaming Normalization** — pi-ai abstracts all provider differences into unified events (`text_delta`, `thinking_delta`, etc.).
+
+**Result:** All architectural assumptions validated. No design blockers.
+
+See: `.agents/research/pi-web-ui-research-findings.md`
+
+---
+
 ## Summary
 
 **10 core requirements** covering:
@@ -159,4 +173,4 @@ A web-based chat interface for interacting with authenticated LLM models via the
 - Error handling (Req 10)
 
 **Phase 1 scope: MVP chat with model selection and streaming responses**  
-**Ready for design phase upon approval.**
+**Research validated. Ready for design phase approval.**
