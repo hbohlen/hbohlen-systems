@@ -1,61 +1,26 @@
-# AGENTS.md — Repository Router
+# AGENTS.md
 
-This file is a **router**. Follow the links below for the canonical source of each topic.
+## Issue tracking
 
----
-
-## Canonical agent workflow
-
-→ **[`.agents/AGENTS.md`](.agents/AGENTS.md)** — full workflow rules, skill categories, folder policy
-
-Key facts:
-- `.agents/` is the canonical home for all agent workflow artifacts
-- `.agents/skills/` is the canonical skill library (pi discovers this natively)
-- `.agents/specs/` holds active feature specs
-- `.agents/steering/` holds project-wide memory files
-
----
-
-## Spec-driven development (quick reference)
-
-```
-/steering                       # bootstrap project memory
-/spec-init "feature description" # start a new spec
-/spec-requirements <feature>    # generate requirements
-/spec-design <feature>          # generate design
-/spec-tasks <feature>           # generate tasks
-/spec-implement <feature>       # implement
-/spec-status [feature]          # check progress
-```
-
-Full command table: see [`.agents/AGENTS.md`](.agents/AGENTS.md)
-
----
-
-## Documentation
-
-→ **[`docs/AGENTS.md`](docs/AGENTS.md)** — what belongs in `docs/`, archive policy, human-facing doc rules
-
----
-
-## Issue tracking (Beads)
-
-Skill: `.agents/skills/beads/`
+This project uses **bd (beads)** for issue tracking.
 
 ```bash
-bd ready --json          # find unblocked work
-bd update <id> --claim   # claim an issue
-bd sync                  # ALWAYS run at session end
+bd create "title" --body "description"   # create an issue
+bd ready                                 # find available work
+bd show <id>                             # view issue details
+bd update <id> --claim                   # claim work
+bd close <id> --reason "done"            # complete work
+bd sync                                  # sync to git
 ```
 
----
+Use `bd` for ALL task tracking. When a problem or idea comes up mid-work, create an issue and move on.
 
-## Session completion (mandatory)
+## Session completion
 
-1. File issues for remaining work (`bd create ...`)
-2. Run quality gates if code changed
-3. Close finished issues (`bd close <id> --reason "..."`)
-4. Sync and push:
+1. Create issues for remaining work
+2. Run quality gates if code changed (`nix flake check`)
+3. Close finished issues
+4. Push:
    ```bash
    git pull --rebase && bd sync && git push
    ```
