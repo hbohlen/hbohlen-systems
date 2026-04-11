@@ -12,13 +12,12 @@
     devShells.default = pkgs.mkShell {
       name = "hbohlen-systems";
 
-      packages = [];
+      packages = [
+        llm-agents-packages.beads
+      ];
 
       shellHook = ''
-        echo "Entering hbohlen-systems base environment..."
-        echo "Tip: use 'nix develop .#ai' for the AI agent shell"
-        
-        # Tools and standard environment variables are mapped by home-manager
+        echo "hbohlen-systems"
       '';
     };
 
