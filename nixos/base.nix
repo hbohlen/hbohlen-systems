@@ -1,13 +1,19 @@
 {pkgs, ...}: {
   nixpkgs.config.allowUnfree = true;
 
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.efiInstallAsRemovable = true;
-  boot.loader.efi.canTouchEfiVariables = false;
+  boot = {
+    loader = {
+      grub = {
+        enable = true;
+        device = "/dev/sda";
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+      };
+      efi.canTouchEfiVariables = false;
+    };
 
-  boot.kernelParams = ["console=ttyS0,115200n8" "console=tty1"];
+    kernelParams = ["console=ttyS0,115200n8" "console=tty1"];
+  };
 
   networking.useDHCP = true;
   networking.firewall.enable = true;

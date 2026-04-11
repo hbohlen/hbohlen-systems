@@ -17,18 +17,20 @@ in {
     "virtio_scsi"
   ];
 
-  services.opencode.enable = true;
-  
-  services.pi-web-ui = {
-    enable = true;
-    port = 3000;
-    user = "hbohlen";
-    authFilePath = "/home/hbohlen/.pi/agent/auth.json";
-  };
+  services = {
+    opencode.enable = true;
 
-  services.caddy = {
-    tailscaleEnable = true;
-    enablePiWebUi = true;
-    piWebUiHost = "mnemosyne.hbohlen.systems";
+    pi-web-ui = {
+      enable = true;
+      port = 3000;
+      user = "hbohlen";
+      authFilePath = "/home/hbohlen/.pi/agent/auth.json";
+    };
+
+    caddy = {
+      tailscaleEnable = true;
+      enablePiWebUi = true;
+      piWebUiHost = "mnemosyne.hbohlen.systems";
+    };
   };
 }

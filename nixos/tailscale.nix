@@ -30,6 +30,12 @@ in {
         mode = "0600";
         services = ["caddy"];
       };
+
+      datadogApiKey = {
+        reference = "op://hbohlen-systems/datadog/apiKey";
+        owner = "hbohlen";
+        mode = "0400";
+      };
     };
   };
 

@@ -1,4 +1,4 @@
-{...}: let
+_: let
   diskDevice = "/dev/sda";
 in {
   disko.devices = {

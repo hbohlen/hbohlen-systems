@@ -27,7 +27,7 @@
           opnixModule
         ];
       in
-        result.config.services.tailscale.enable == true;
+        result.config.services.tailscale.enable;
       expected = true;
     };
   };

@@ -38,7 +38,27 @@
         ./tests/evaluation
       ];
 
-      perSystem = {pkgs, ...}: {
+      perSystem = {pkgs, ...}: let
+        # Mirror the deployed hbohlen-01 assembly so nix flake check explicitly
+        # evaluates the Home Manager user path used by this repository.
+        hbohlen01Eval = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {inherit inputs;};
+          modules = [
+            inputs.home-manager.nixosModules.default
+            inputs.disko.nixosModules.disko
+            inputs.opnix.nixosModules.default
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+            {imports = import ./nixos;}
+            ./home
+            ./hosts/hbohlen-01.nix
+          ];
+        };
+        hbohlen01HomeConfig = hbohlen01Eval.config.home-manager.users.hbohlen;
+      in {
         nix-unit.inputs = {
           inherit (inputs) nixpkgs flake-parts nix-unit llm-agents;
         };
@@ -59,15 +79,7 @@
           '';
 
           statix = pkgs.runCommand "statix-check" {} ''
-            ${pkgs.statix}/bin/statix check \
-              ${./flake.nix} \
-              ${./parts} \
-              ${./hosts} \
-              ${./nixos} \
-              ${./home} \
-              ${./tests} \
-              ${./lib} \
-              ${./scripts}
+            ${pkgs.statix}/bin/statix check ${./.}
             touch $out
           '';
 
@@ -83,6 +95,16 @@
               ${./scripts}
             touch $out
           '';
+
+          # Explicitly validate the deployed host path used in this repo:
+          # nixosConfigurations.hbohlen-01.config.home-manager.users.hbohlen
+          hbohlen-01-eval =
+            pkgs.runCommand "hbohlen-01-eval-check" {
+              inherit (hbohlen01HomeConfig.home) username;
+            } ''
+              test "$username" = "hbohlen"
+              touch $out
+            '';
         };
       };
     };

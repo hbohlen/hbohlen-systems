@@ -5,10 +5,7 @@
 }: let
   llm-agents-packages = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
 in {
-  home-manager.users.hbohlen = {
-    pkgs,
-    ...
-  }: {
+  home-manager.users.hbohlen = {pkgs, ...}: {
     imports = [
       ./tmux.nix
       ./ssh-client.nix
@@ -19,6 +16,8 @@ in {
       stateVersion = "24.11";
       homeDirectory = "/home/hbohlen";
       username = "hbohlen";
+
+      file.".pi/agent/extensions/datadog-observability.ts".source = ../pi/extensions/datadog-observability.ts;
     };
 
     programs.fish = {
@@ -114,7 +113,7 @@ in {
       };
     };
 
-    packages = with pkgs; [
+    home.packages = with pkgs; [
       # Base Terminal Tools
       direnv
       nix-direnv

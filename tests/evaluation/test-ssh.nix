@@ -1,9 +1,5 @@
 {inputs, ...}: {
-  perSystem = {
-    pkgs,
-    lib,
-    ...
-  }: let
+  perSystem = {pkgs, ...}: let
     homeManagerModule = inputs.home-manager.nixosModules.home-manager;
 
     minimalEvalConfig = {
@@ -14,18 +10,22 @@
       boot.loader.grub.devices = ["/dev/sda"];
     };
   in {
-    nix-unit.tests.testSshEvaluates = {
-      expr = let
-        result = pkgs.nixos [
-          ../../nixos/base.nix
-          ../../nixos/user.nix
-          ../../nixos/ssh.nix
-          minimalEvalConfig
-          homeManagerModule
-        ];
-      in
-        result.config.services.openssh.enable == true;
-      expected = true;
+    nix-unit = {
+      tests = {
+        testSshEvaluates = {
+          expr = let
+            result = pkgs.nixos [
+              ../../nixos/base.nix
+              ../../nixos/user.nix
+              ../../nixos/ssh.nix
+              minimalEvalConfig
+              homeManagerModule
+            ];
+          in
+            result.config.services.openssh.enable;
+          expected = true;
+        };
+      };
     };
   };
 }
