@@ -3,6 +3,11 @@ import { hostname } from "node:os";
 import { basename } from "node:path";
 import { readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
+import * as http from "node:http";
+import * as https from "node:https";
+import * as net from "node:net";
+import * as tls from "node:tls";
+import { buildObservabilityConfig, formatProxyStatus, selectProxyForUrl } from "./datadog-observability-config.mjs";
 
 type Primitive = string | number | boolean;
 
@@ -27,6 +32,9 @@ type ObservabilityConfig = {
   apiKeyFile?: string;
   includePromptText: boolean;
   includeToolArguments: boolean;
+  httpsProxy?: string;
+  httpProxy?: string;
+  noProxy?: string;
 };
 
 const INTERNAL_SPAN_KIND = 1;
@@ -35,17 +43,6 @@ const STATUS_OK = 1;
 const STATUS_ERROR = 2;
 const EXTENSION_NAME = "datadog-observability";
 const EXTENSION_VERSION = "0.1.0";
-
-function env(name: string): string | undefined {
-  const value = process.env[name]?.trim();
-  return value ? value : undefined;
-}
-
-function envBool(name: string, fallback = false): boolean {
-  const value = env(name);
-  if (!value) return fallback;
-  return ["1", "true", "yes", "on"].includes(value.toLowerCase());
-}
 
 function randomHex(bytes: number): string {
   return randomBytes(bytes).toString("hex");
@@ -82,24 +79,7 @@ function attributesToOtel(attributes: Record<string, Primitive | undefined>) {
 }
 
 function buildConfig(): ObservabilityConfig {
-  const site = env("PI_OBSERVABILITY_SITE") ?? env("DD_SITE") ?? "datadoghq.com";
-  const otlpBaseUrl = env("PI_OBSERVABILITY_OTLP_BASE_URL") ?? `https://otlp-http-intake.logs.${site}`;
-  const apiKey = env("PI_OBSERVABILITY_API_KEY") ?? env("DD_API_KEY");
-  const apiKeyFile = env("PI_OBSERVABILITY_API_KEY_FILE") ?? env("DD_API_KEY_FILE");
-  const enabled = envBool("PI_OBSERVABILITY_ENABLE", Boolean(apiKey || apiKeyFile));
-
-  return {
-    enabled,
-    serviceName: env("PI_OBSERVABILITY_SERVICE_NAME") ?? "pi-coding-agent",
-    serviceNamespace: env("PI_OBSERVABILITY_SERVICE_NAMESPACE") ?? "hbohlen-systems",
-    environment: env("PI_OBSERVABILITY_ENV") ?? env("DD_ENV") ?? "dev",
-    site,
-    otlpBaseUrl,
-    apiKey,
-    apiKeyFile,
-    includePromptText: envBool("PI_OBSERVABILITY_INCLUDE_PROMPT_TEXT", false),
-    includeToolArguments: envBool("PI_OBSERVABILITY_INCLUDE_TOOL_ARGUMENTS", false),
-  };
+  return buildObservabilityConfig(process.env) as ObservabilityConfig;
 }
 
 async function readApiKey(config: ObservabilityConfig): Promise<string | undefined> {
@@ -128,6 +108,132 @@ function promptAttributes(prompt: string | undefined, includePromptText: boolean
 function safeErrorMessage(error: unknown): string {
   if (error instanceof Error) return truncate(error.message, 240);
   return truncate(String(error), 240);
+}
+
+function proxyAuthorizationHeader(proxyUrl: URL): string | undefined {
+  if (!proxyUrl.username && !proxyUrl.password) return undefined;
+  const auth = `${decodeURIComponent(proxyUrl.username)}:${decodeURIComponent(proxyUrl.password)}`;
+  return `Basic ${Buffer.from(auth).toString("base64")}`;
+}
+
+function requestViaDirectConnection(targetUrl: URL, body: string, headers: Record<string, string>) {
+  return new Promise<{ statusCode: number; statusMessage: string }>((resolve, reject) => {
+    const transport = targetUrl.protocol === "https:" ? https : http;
+    const request = transport.request(
+      targetUrl,
+      {
+        method: "POST",
+        headers: {
+          ...headers,
+          "content-length": Buffer.byteLength(body).toString(),
+        },
+      },
+      (response) => {
+        response.resume();
+        response.on("end", () => {
+          resolve({
+            statusCode: response.statusCode ?? 0,
+            statusMessage: response.statusMessage ?? "",
+          });
+        });
+      },
+    );
+
+    request.on("error", reject);
+    request.end(body);
+  });
+}
+
+function connectTunnel(proxyUrl: URL, targetUrl: URL) {
+  return new Promise<net.Socket>((resolve, reject) => {
+    const transport = proxyUrl.protocol === "https:" ? https : http;
+    const proxyHeaders: Record<string, string> = {
+      host: `${targetUrl.hostname}:${targetUrl.port || 443}`,
+    };
+    const proxyAuth = proxyAuthorizationHeader(proxyUrl);
+    if (proxyAuth) {
+      proxyHeaders["proxy-authorization"] = proxyAuth;
+    }
+
+    const connectRequest = transport.request({
+      protocol: proxyUrl.protocol,
+      hostname: proxyUrl.hostname,
+      port: proxyUrl.port || (proxyUrl.protocol === "https:" ? 443 : 80),
+      method: "CONNECT",
+      path: `${targetUrl.hostname}:${targetUrl.port || 443}`,
+      headers: proxyHeaders,
+    });
+
+    connectRequest.on("connect", (response, socket) => {
+      if (response.statusCode !== 200) {
+        socket.destroy();
+        reject(new Error(`Proxy CONNECT failed: ${response.statusCode} ${response.statusMessage ?? ""}`.trim()));
+        return;
+      }
+      resolve(socket);
+    });
+
+    connectRequest.on("error", reject);
+    connectRequest.end();
+  });
+}
+
+function requestViaProxy(targetUrl: URL, proxy: string, body: string, headers: Record<string, string>) {
+  return new Promise<{ statusCode: number; statusMessage: string }>(async (resolve, reject) => {
+    try {
+      const proxyUrl = new URL(proxy);
+      const tunneledSocket = await connectTunnel(proxyUrl, targetUrl);
+      const secureSocket = tls.connect({
+        socket: tunneledSocket,
+        servername: targetUrl.hostname,
+      });
+
+      secureSocket.on("error", reject);
+
+      const request = https.request(
+        {
+          protocol: "https:",
+          hostname: targetUrl.hostname,
+          port: targetUrl.port || 443,
+          path: `${targetUrl.pathname}${targetUrl.search}`,
+          method: "POST",
+          headers: {
+            ...headers,
+            host: targetUrl.host,
+            "content-length": Buffer.byteLength(body).toString(),
+          },
+          agent: false,
+          createConnection: () => secureSocket,
+        },
+        (response) => {
+          response.resume();
+          response.on("end", () => {
+            resolve({
+              statusCode: response.statusCode ?? 0,
+              statusMessage: response.statusMessage ?? "",
+            });
+          });
+        },
+      );
+
+      request.on("error", reject);
+      request.end(body);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function postJson(target: string, body: unknown, headers: Record<string, string>, proxyConfig: ObservabilityConfig) {
+  const targetUrl = new URL(target);
+  const serializedBody = JSON.stringify(body);
+  const proxy = selectProxyForUrl(targetUrl, proxyConfig);
+
+  if (proxy) {
+    return requestViaProxy(targetUrl, proxy, serializedBody, headers);
+  }
+
+  return requestViaDirectConnection(targetUrl, serializedBody, headers);
 }
 
 export default function datadogObservability(pi: ExtensionAPI) {
@@ -215,17 +321,18 @@ export default function datadogObservability(pi: ExtensionAPI) {
       ],
     };
 
-    const response = await fetch(`${config.otlpBaseUrl.replace(/\/$/, "")}/v1/traces`, {
-      method: "POST",
-      headers: {
+    const response = await postJson(
+      `${config.otlpBaseUrl.replace(/\/$/, "")}/v1/traces`,
+      payload,
+      {
         "content-type": "application/json",
         "DD-API-KEY": apiKey,
       },
-      body: JSON.stringify(payload),
-    });
+      config,
+    );
 
-    if (!response.ok) {
-      throw new Error(`Datadog OTLP export failed: ${response.status} ${response.statusText}`);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw new Error(`Datadog OTLP export failed: ${response.statusCode} ${response.statusMessage}`.trim());
     }
   }
 
@@ -288,6 +395,7 @@ export default function datadogObservability(pi: ExtensionAPI) {
   pi.registerCommand("observability-status", {
     description: "Show Datadog/OpenTelemetry extension status",
     handler: async (_args, ctx) => {
+      const proxyStatus = formatProxyStatus(config);
       ctx.ui.notify(
         [
           `enabled=${config.enabled}`,
@@ -296,6 +404,9 @@ export default function datadogObservability(pi: ExtensionAPI) {
           `site=${config.site}`,
           `endpoint=${config.otlpBaseUrl}`,
           `apiKeyConfigured=${Boolean(config.apiKey || config.apiKeyFile)}`,
+          `httpsProxy=${proxyStatus.httpsProxy}`,
+          `httpProxy=${proxyStatus.httpProxy}`,
+          `noProxy=${proxyStatus.noProxy}`,
           `lastExportStatus=${lastExportStatus}`,
           `lastExportError=${lastExportError ?? "none"}`,
         ].join("\n"),

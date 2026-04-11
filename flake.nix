@@ -96,6 +96,13 @@
             touch $out
           '';
 
+          datadog-observability-config-tests = pkgs.runCommand "datadog-observability-config-tests" {} ''
+            cp -r ${./pi/extensions} ./pi-extensions
+            chmod -R +w ./pi-extensions
+            ${pkgs.nodejs}/bin/node --test ./pi-extensions/datadog-observability-config.test.mjs
+            touch $out
+          '';
+
           # Explicitly validate the deployed host path used in this repo:
           # nixosConfigurations.hbohlen-01.config.home-manager.users.hbohlen
           hbohlen-01-eval =

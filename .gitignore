@@ -16,6 +16,7 @@ node_modules/
 
 # Deployment artifacts
 deploy.log
+output/
 
 .vscode/
 /node_modules/

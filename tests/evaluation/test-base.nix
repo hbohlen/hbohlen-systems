@@ -94,7 +94,8 @@
             ];
             homeConfig = lib.attrsets.attrByPath ["home-manager" "users" "hbohlen"] null result.config;
           in
-            lib.hasAttrByPath [".pi/agent/extensions/datadog-observability.ts"] homeConfig.home.file;
+            lib.hasAttrByPath [".pi/agent/extensions/datadog-observability.ts"] homeConfig.home.file
+            && lib.hasAttrByPath [".pi/agent/extensions/datadog-observability-config.mjs"] homeConfig.home.file;
           expected = true;
         };
       };

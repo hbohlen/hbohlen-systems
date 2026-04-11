@@ -18,6 +18,7 @@ in {
       username = "hbohlen";
 
       file.".pi/agent/extensions/datadog-observability.ts".source = ../pi/extensions/datadog-observability.ts;
+      file.".pi/agent/extensions/datadog-observability-config.mjs".source = ../pi/extensions/datadog-observability-config.mjs;
     };
 
     programs.fish = {

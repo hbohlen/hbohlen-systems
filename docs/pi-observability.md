@@ -79,7 +79,7 @@ The extension sends OTLP/HTTP JSON to:
 
 Default base URL:
 
-- `https://otlp-http-intake.logs.${PI_OBSERVABILITY_SITE:-datadoghq.com}`
+- `https://otlp.${PI_OBSERVABILITY_SITE:-datadoghq.com}`
 
 Headers:
 
@@ -114,12 +114,153 @@ Useful optional overrides:
 - `PI_OBSERVABILITY_OTLP_BASE_URL`
 - `PI_OBSERVABILITY_INCLUDE_PROMPT_TEXT`
 - `PI_OBSERVABILITY_INCLUDE_TOOL_ARGUMENTS`
+- `PI_OBSERVABILITY_HTTPS_PROXY`
+- `PI_OBSERVABILITY_HTTP_PROXY`
+- `PI_OBSERVABILITY_NO_PROXY`
+- fallback envs: `HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY`
 
 ## Operational notes
 
 - missing API key disables successful export but does not break `pi`
+- Datadog direct OTLP traces intake is documented as preview-only; org-side enablement may be required
+- the exporter expects a Datadog API key, not an application key or client token
 - exports are serialized through an in-extension queue to avoid overlapping HTTP posts
+- direct egress is the default when no proxy is configured
 - `/observability-status` reports the effective config and last exporter error
+- `/observability-status` redacts proxy credentials before showing configured proxy URLs
+
+## Proxy configuration
+
+The exporter now chooses outbound behavior explicitly instead of relying on ambient `fetch` proxy handling.
+
+### Supported env vars
+
+Preferred observability-specific settings:
+
+- `PI_OBSERVABILITY_HTTPS_PROXY`
+- `PI_OBSERVABILITY_HTTP_PROXY`
+- `PI_OBSERVABILITY_NO_PROXY`
+
+Fallback standard env vars:
+
+- `HTTPS_PROXY`
+- `HTTP_PROXY`
+- `NO_PROXY`
+
+Lowercase standard variants are also accepted as a final fallback:
+
+- `https_proxy`
+- `http_proxy`
+- `no_proxy`
+
+### Precedence rules
+
+Proxy config is resolved in this order:
+
+1. `PI_OBSERVABILITY_*`
+2. uppercase standard proxy vars
+3. lowercase standard proxy vars
+
+For HTTPS Datadog OTLP export, the extension prefers `PI_OBSERVABILITY_HTTPS_PROXY`/`HTTPS_PROXY`. If no HTTPS-specific proxy is set, it falls back to `PI_OBSERVABILITY_HTTP_PROXY`/`HTTP_PROXY` for the HTTPS target.
+
+If no matching proxy variable is configured, the exporter uses direct outbound HTTPS.
+
+### NO_PROXY behavior
+
+`PI_OBSERVABILITY_NO_PROXY`/`NO_PROXY` bypasses the proxy for matching hosts. Supported matching modes are:
+
+- exact hostname match, e.g. `otlp-http-intake.logs.datadoghq.com`
+- domain suffix match, e.g. `.datadoghq.com` or `datadoghq.eu`
+- wildcard `*` to bypass the proxy for all destinations
+
+Examples:
+
+- `PI_OBSERVABILITY_NO_PROXY=otlp-http-intake.logs.datadoghq.com`
+- `PI_OBSERVABILITY_NO_PROXY=.datadoghq.com`
+- `PI_OBSERVABILITY_NO_PROXY=*`
+
+When `NO_PROXY` matches the Datadog intake hostname, the exporter skips the proxy and uses direct egress.
+
+### `/observability-status`
+
+`/observability-status` shows the resolved proxy config via:
+
+- `httpsProxy=`
+- `httpProxy=`
+- `noProxy=`
+
+Credential material in proxy URLs is sanitized in status output. Example:
+
+- `https://user:secret@proxy.internal:8443` is shown as `https://***:***@proxy.internal:8443/`
+
+## Network compatibility guidance
+
+The exporter uses outbound HTTPS only. It posts JSON to:
+
+- `https://otlp.${PI_OBSERVABILITY_SITE:-datadoghq.com}/v1/traces`
+
+For the current default config (`PI_OBSERVABILITY_SITE=datadoghq.com`), the target is:
+
+- `https://otlp.datadoghq.com/v1/traces`
+
+### Required egress
+
+Observability export needs:
+
+- DNS resolution for `otlp-http-intake.logs.<site>`
+- outbound TCP 443 to the resolved Datadog intake address
+- normal public internet routing from the host
+
+No inbound ports are required for Datadog telemetry.
+
+### Tailscale impact
+
+Current host/network settings do not inherently block Datadog OTLP egress:
+
+- `services.tailscale.openFirewall = true` opens Tailscale-related firewall handling, but does not block normal outbound HTTPS
+- `services.tailscale.useRoutingFeatures = "server"` enables Tailscale server-mode routing features, but does not by itself force Datadog traffic through Tailscale
+- current Tailscale prefs show `RouteAll: false` and no exit node configured, so public internet traffic keeps using the normal default route rather than a Tailscale exit node
+- Tailscale SSH, `tailscale serve`, and the Caddy Tailscale listener affect inbound/tailnet access patterns, not outbound OTLP export to Datadog
+- MagicDNS/CorpDNS do not conflict with the Datadog hostname; public DNS lookup still resolves the intake endpoint normally
+
+A live connectivity check from this host succeeded at the network layer against Datadog OTLP hosts:
+
+- `otlp.datadoghq.com` and `otlp.us5.datadoghq.com` resolve and accept HTTPS connections
+
+Note: Datadog's direct OTLP traces intake is documented as preview-only. Successful DNS/TLS reachability does not by itself guarantee that direct trace ingestion is enabled for the organization.
+
+### Firewall guidance
+
+With the current NixOS config, no extra firewall rule is needed for Datadog export because the local firewall governs inbound traffic and outbound traffic is permitted by default.
+
+If this host later moves behind restrictive egress controls, allow:
+
+- destination: `otlp-http-intake.logs.<site>`
+- protocol: HTTPS
+- port: `443/tcp`
+
+### Regional Datadog sites
+
+The extension builds the endpoint from `PI_OBSERVABILITY_SITE`, so the hostname changes with the Datadog site. Examples:
+
+- `datadoghq.com` -> `otlp.datadoghq.com`
+- `datadoghq.eu` -> `otlp.datadoghq.eu`
+- `us3.datadoghq.com` -> `otlp.us3.datadoghq.com`
+- `us5.datadoghq.com` -> `otlp.us5.datadoghq.com`
+- `ap1.datadoghq.com` -> `otlp.ap1.datadoghq.com`
+- `ddog-gov.com` -> `otlp.ddog-gov.com`
+
+When changing sites, verify that DNS and outbound 443 are allowed for the corresponding hostname.
+
+### Proxy guidance
+
+The exporter now supports explicit HTTP(S) proxy configuration for Datadog OTLP requests.
+
+- direct outbound HTTPS remains the default when no proxy is configured
+- configured HTTP or HTTPS proxies are used explicitly rather than relying on Node/undici ambient behavior
+- if `NO_PROXY` matches the Datadog intake hostname, the exporter bypasses the proxy and uses direct egress
+
+For proxy-required environments, set the `PI_OBSERVABILITY_*` proxy vars explicitly so behavior is deterministic. For direct-egress environments, leave them unset.
 
 ## Acceptance criteria
 
